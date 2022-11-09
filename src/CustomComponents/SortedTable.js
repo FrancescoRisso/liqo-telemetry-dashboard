@@ -1,0 +1,105 @@
+/*
+
+description:
+	Creates a scrollable table that allows you to sort the entries by column value
+	
+state:
+	- sortingBy: the name of the column the sort is being done on (or null)
+	- data: the sorted data displayed in the table
+	
+props:
+	- columns[{}]: the list of titles of the columns, in the form { "type", "label" }
+	- data[[{}]]: the list of rows, with the items in the form { "type", "value" } or
+		{ "type", "first", "last" } if type = "timeDuration". If there is a "type" = "link",
+		that value would not be inserted as a column, but the whole row would be a link to
+		that path
+	- sortingFunct(): a function that, given the column name, returns a series of nested
+		functions, that work as follows:
+		- sortingFunct(colName, index) -> returns sortingFunctAsc(ascending: bool)
+		- sortingFunctAsc(asc) -> returns comparisonFunct(a, b)
+		- comparisonFunct is the function to be passed to Array.sort()
+	
+hooks:
+	- useEffect: every time the props data changes, pushes it into the state variable,
+		while marking that no sorting is currently acrive
+	
+context:
+	- 
+	
+imported into:
+	- ClustersList
+	
+component dependences:
+	- TableHeader
+	- TableRow
+	
+	other dependences:
+	- React-bootstrap components
+	
+*/
+
+import React, { useEffect, useState } from "react";
+
+import TableHeader from "./TableHeader";
+import TableRow from "./TableRow";
+
+import { Table } from "react-bootstrap";
+
+const SortedTable = ({ columns, data: values, sortingFunct }) => {
+	const [sortingBy, setSortingBy] = useState(null);
+	const [data, setData] = useState([]);
+
+	useEffect(() => {
+		setData(values);
+		setSortingBy(null);
+	}, [values]);
+
+	return (
+		<div className="pb-0 h-100percent w-100percent">
+			<div className="pb-0 h-100percent table-wrapper w-100percent">
+				<Table striped bordered className="mb-0 fixed white-bg border-table">
+					<thead className="fixed bg-white">
+						<tr>
+							{columns.map((title, index, array) => {
+								let sortingFunctAsc = sortingFunct(title.type, index);
+								return (
+									<TableHeader
+										key={title.label}
+										width={`${100 / array.length}%`}
+										title={title.label}
+										doSort={(asc) => {
+											let comparisonFunct = sortingFunctAsc(asc);
+											setSortingBy(title);
+											setData([...data].sort(comparisonFunct));
+										}}
+										isCurrentSort={sortingBy === title}
+									/>
+								);
+							})}
+						</tr>
+					</thead>
+					<tbody className="table-wrapper">
+						{data.map((record, index) => {
+							const width = `${100 / columns.length}%`;
+							return (
+								<TableRow
+									id={index}
+									key={index}
+									width={width}
+									data={record.filter((x) => x.type !== "link")}
+									link={
+										record.filter((x) => x.type === "link").length === 0
+											? null
+											: record.filter((x) => x.type === "link")[0].value
+									}
+								/>
+							);
+						})}
+					</tbody>
+				</Table>
+			</div>
+		</div>
+	);
+};
+
+export default SortedTable;
