@@ -10,28 +10,27 @@ state:
 	
 props:
 	
-functions:
-	- setToken(val, expiryTime): sets val as the current APIToken, and starts an expiryTime-long
-		APIExpiryTimeout to reset the token when it expires
-	- isTokenPresent(): return whether there is a token currently active
-	- isTokenSameAs(reference): tells whether the token is equal to a reference one
-	- loadClusterSummary(force): loads the cluster summary from the api, if not present yet.
-		The force parameter forces the loading to reload the data even if it is present.
+hooks:
+	
+context:
+	- ApiContext (provider)
 	
 imported into:
 	
-dependences:
+component dependences:
 	- TitleBar
 	- SideMenu
 	- PageRouter
-	- ApiContext
+	
+	other dependences:
 	- React-bootstrap components
+	- React-router-dom components
+	- apis
 	- css files
 	
 */
 
-
-import React from "react";
+import React, { useState } from "react";
 
 import TitleBar from "./CustomComponents/TitleBar";
 import SideMenu from "./CustomComponents/SideMenu";
@@ -40,49 +39,42 @@ import PageRouter from "./CustomComponents/Routing/PageRouter";
 import ApiContext from "./CustomComponents/ApiContext";
 
 import { Container, Row, Col } from "react-bootstrap";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-
 import { BrowserRouter as Router } from "react-router-dom";
 import { getFullTable, login } from "./api";
 
-class App extends React.Component {
-	static contextType = ApiContext;
+const App = () => {
+	const [APIToken, setAPIToken] = useState(null);
+	const [APIExpiryTimeout, setAPIExpiryTimeout] = useState(null);
+	const [APIclusterSummary, setAPIclusterSummary] = useState([]);
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			APIToken: null,
-			APIExpiryTimeout: null,
-			APIclusterSummary: []
-		};
-	}
-
-	setToken = (val, expiryTime) => {
+	const setToken = (val, expiryTime) => {
 		// Remove existing reset timeouts
-		if (this.state.APIExpiryTimeout) clearTimeout(this.state.APIExpiryTimeout);
+		if (APIExpiryTimeout) clearTimeout(APIExpiryTimeout);
 
 		// Add timeout to remove token when it expires
 		let expiryTimeout = setTimeout(() => {
-			this.setState({ APIToken: null, APIExpiryTimeout: null });
+			setAPIToken(null);
+			setAPIExpiryTimeout(null);
 		}, expiryTime * 1000);
 
 		// Store the token and the timeout
 		login(val);
-		this.setState({ APIToken: val, APIExpiryTimeout: expiryTimeout });
+		setAPIToken(val);
+		setAPIExpiryTimeout(expiryTimeout);
 	};
 
-	isTokenPresent = () => {
-		return this.state.APIToken !== null;
+	const isTokenPresent = () => {
+		return APIToken !== null;
 	};
 
-	isTokenSameAs = (reference) => {
-		return this.state.APIToken === reference;
+	const isTokenSameAs = (reference) => {
+		return APIToken === reference;
 	};
 
-	loadClusterSummary = (force) => {
-		if (force || this.state.APIclusterSummary === "Error" || this.state.APIclusterSummary.length === 0)
+	const loadClusterSummary = (force) => {
+		if (force || APIclusterSummary === "Error" || APIclusterSummary.length === 0)
 			getFullTable("liqo-user-telemetry-last-record")
 				.then((data) => {
 					getFullTable("liqo-user-telemetry-first-record")
@@ -95,61 +87,84 @@ class App extends React.Component {
 									entry.computedUptime = entry.timestamp - entry.computedFirstSeen;
 									return entry;
 								});
-								this.setState({ APIclusterSummary: data });
+								setAPIclusterSummary(data);
 							} catch {
 								console.log("Some records in the 'last' table were not present in the 'first' table");
-								this.setState({ APIclusterSummary: "Error" });
+								setAPIclusterSummary("Error");
 							}
 						})
 						.catch((err) => {
 							console.log(err);
-							this.setState({ APIclusterSummary: "Error" });
+							setAPIclusterSummary("Error");
 						});
 				})
 				.catch((err) => {
 					console.log(err);
-					this.setState({ APIclusterSummary: "Error" });
+					setAPIclusterSummary("Error");
 				});
 	};
 
-	// componentDidUpdate(); // if token -> null, redirect to logbackin
-
-	render() {
-		return (
-			<ApiContext.Provider
-				value={{
-					API: {
-						setToken: this.setToken,
-						isTokenPresent: this.isTokenPresent,
-						isTokenSameAs: this.isTokenSameAs,
-						dataLoaders: {
-							clusterSummary: this.loadClusterSummary
-						},
-						data: {
-							clusterSummary: this.state.APIclusterSummary
-						},
-						dataSorters: {
-							clusterSummary: this.sortClusterSummary
-						}
+	return (
+		<ApiContext.Provider
+			value={{
+				API: {
+					setToken: setToken,
+					isTokenPresent: isTokenPresent,
+					isTokenSameAs: isTokenSameAs,
+					dataLoaders: {
+						clusterSummary: loadClusterSummary
+					},
+					data: {
+						clusterSummary: APIclusterSummary
 					}
-				}}
-			>
-				<Router>
-					<TitleBar />
-					<Container fluid>
-						<Row>
-							<Col md="2" className="p-0">
-								<SideMenu />
-							</Col>
-							<Col md="10">
-								<PageRouter />
-							</Col>
-						</Row>
-					</Container>
-				</Router>
-			</ApiContext.Provider>
-		);
-	}
-}
+				}
+			}}
+		>
+			<Router>
+				<TitleBar />
+				<Container fluid>
+					<Row>
+						<Col md="2" className="p-0">
+							<SideMenu />
+						</Col>
+						<Col md="10">
+							<PageRouter />
+						</Col>
+					</Row>
+				</Container>
+			</Router>
+		</ApiContext.Provider>
+	);
+};
 
 export default App;
+
+/*
+
+description:
+	
+state:
+	
+props:
+	
+functions:
+	- setToken(val, expiryTime): sets val as the current APIToken, and starts an expiryTime-long
+		APIExpiryTimeout to reset the token when it expires
+	- isTokenPresent(): return whether there is a token currently active
+	- isTokenSameAs(reference): tells whether the token is equal to a reference one
+	- loadClusterSummary(force): loads the cluster summary from the api, if not present yet.
+		The force parameter forces the loading to reload the data even if it is present.
+	
+imported into:
+	
+dependences:
+	
+*/
+
+// class AppOld extends React.Component {
+// 	static contextType = ApiContext;
+
+// 	// componentDidUpdate(); // if token -> null, redirect to logbackin
+
+// 	render() {}
+// }
