@@ -112,6 +112,8 @@ class App extends React.Component {
 				});
 	};
 
+	// componentDidUpdate(); // if token -> null, redirect to logbackin
+
 	render() {
 		return (
 			<ApiContext.Provider

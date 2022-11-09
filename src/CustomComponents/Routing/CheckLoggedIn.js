@@ -9,45 +9,50 @@ state:
 	
 props:
 	- link: the link of the displayed page
-	- params (optional): the eventual parameters to be passed to the child
 	
-functions:
+hooks:
+	
+context:
+	- ApiContext
 	
 imported into:
 	- PageRouter
 	
-dependences:
+component dependences:
 	- ClustersList
-	- ApiContext
-	- react-router-dom components
+	
+other dependences:
 	- requireLogin
+	- react-router-dom components
 	
 */
 
-import React from "react";
+import React, { useContext } from "react";
 
-import ClustersList from "../ClustersList";
-
+import { Navigate, useParams } from "react-router-dom";
 import ApiContext from "../ApiContext";
 import requireLogin from "../../requireLogin";
 
-import { Navigate } from "react-router-dom";
+import ClustersList from "../ClustersList";
 
-class CheckLoggedIn extends React.Component {
-	static contextType = ApiContext;
+const CheckLoggedIn = ({ link }) => {
+	let { clusterID } = useParams();
 
-	render() {
-		if (requireLogin && !this.context.API.isTokenPresent()) return <Navigate to="/logbackin" />;
+	let { API } = useContext(ApiContext);
 
-		switch (this.props.link) {
-			case "/test":
-				return <p>Test</p>;
-			case "/clusters":
-				return <ClustersList />;
-			default:
-				return <p>Default</p>;
-		}
+	if (requireLogin && !API.isTokenPresent()) return <Navigate to="/logbackin" />;
+
+	switch (link) {
+		case "/test":
+			return <p>Test</p>;
+		case "/clusters":
+			return <ClustersList />;
+		case "/cluster":
+			return <>{clusterID}</>;
+
+		default:
+			return <p>Default</p>;
 	}
-}
+};
 
 export default CheckLoggedIn;

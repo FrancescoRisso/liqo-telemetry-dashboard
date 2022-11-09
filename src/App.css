@@ -99,3 +99,7 @@
 .w-allbut15px {
 	min-width: calc(100% - 15px);
 }
+
+.clickable:hover {
+	cursor: pointer;
+}

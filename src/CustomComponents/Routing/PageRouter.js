@@ -7,15 +7,19 @@ state:
 	
 props:
 	
-functions:
+hooks:
+	
+context:
 	
 imported into:
 	- App
 	
-dependences:
+component dependences:
 	- Login
-	- RedirectFromHome (RedirectFromHomeClass)
+	- RedirectFromHome
 	- CheckLoggedIn
+	
+other dependences:
 	- react-router-dom components
 	
 */
@@ -28,19 +32,18 @@ import RedirectFromHome from "./RedirectFromHome";
 
 import { Routes as Switch, Route } from "react-router-dom";
 
-class PageRouter extends React.Component {
-	render() {
-		return (
-			<div className="page-height m-0">
-				<Switch>
-					<Route path="/login" element={<Login text="Please log in to view the dashboard" />} />
-					<Route path="/logbackin" element={<Login text="Your session expired. Please log back in" />} />
-					<Route path="/clusters" element={<CheckLoggedIn link="/clusters" />} />
-					<Route path="*" element={<RedirectFromHome />} />
-				</Switch>
-			</div>
-		);
-	}
-}
+const PageRouter = () => {
+	return (
+		<div className="page-height m-0">
+			<Switch>
+				<Route path="/login" element={<Login text="Please log in to view the dashboard" />} />
+				<Route path="/logbackin" element={<Login text="Your session expired. Please log back in" />} />
+				<Route path="/clusters" element={<CheckLoggedIn link="/clusters" />} />
+				<Route path="/cluster/:clusterID" element={<CheckLoggedIn link="/cluster" />} />
+				<Route path="*" element={<RedirectFromHome />} />
+			</Switch>
+		</div>
+	);
+};
 
 export default PageRouter;

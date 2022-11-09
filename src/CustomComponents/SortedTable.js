@@ -10,113 +10,96 @@ state:
 props:
 	- columns[{}]: the list of titles of the columns, in the form { "type", "label" }
 	- data[[{}]]: the list of rows, with the items in the form { "type", "value" } or
-		{ "type", "first", "last" } if type = "timeDuration"
+		{ "type", "first", "last" } if type = "timeDuration". If there is a "type" = "link",
+		that value would not be inserted as a column, but the whole row would be a link to
+		that path
 	- sortingFunct(): a function that, given the column name, returns a series of nested
 		functions, that work as follows:
 		- sortingFunct(colName, index) -> returns sortingFunctAsc(ascending: bool)
 		- sortingFunctAsc(asc) -> returns comparisonFunct(a, b)
 		- comparisonFunct is the function to be passed to Array.sort()
 	
-functions:
-	- componentDidMount(): copies the data from the props to the state (with no sorting)
-	- componentDidUpdate(prevprops): if data from the props changes, copies it into the state
-		(removing any eventyal sorting setting)
+hooks:
+	- useEffect: every time the props data changes, pushes it into the state variable,
+		while marking that no sorting is currently acrive
+	
+context:
+	- 
 	
 imported into:
 	- ClustersList
 	
-dependences:
+component dependences:
 	- TableHeader
-	- moment
+	- TableRow
+	
+	other dependences:
 	- React-bootstrap components
 	
 */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import TableHeader from "./TableHeader";
+import TableRow from "./TableRow";
 
 import { Table } from "react-bootstrap";
-import Moment from "react-moment";
 
-class SortedTable extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = { sortingBy: null, data: [] };
-	}
+const SortedTable = ({ columns, data: values, sortingFunct }) => {
+	const [sortingBy, setSortingBy] = useState(null);
+	const [data, setData] = useState([]);
 
-	componentDidMount = () => {
-		this.setState({ data: this.props.data });
-	};
+	useEffect(() => {
+		setData(values);
+		setSortingBy(null);
+	}, [values]);
 
-	componentDidUpdate = (prevprops) => {
-		if (prevprops.data !== this.props.data) this.setState({ data: this.props.data, sortingBy: null });
-	};
-
-	render() {
-		return (
-			<div className="pb-0 h-100percent w-100percent">
-				<div className=" pb-0 h-100percent table-wrapper w-100percent">
-					<Table striped bordered className="mb-0 fixed white-bg border-table">
-						<thead className="fixed bg-white">
-							<tr>
-								{this.props.columns.map((title, index, array) => {
-									let sortingFunctAsc = this.props.sortingFunct(title.type, index);
-									return (
-										<TableHeader
-											key={title.label}
-											width={`${100 / array.length}%`}
-											title={title.label}
-											doSort={(asc) => {
-												let comparisonFunct = sortingFunctAsc(asc);
-												this.setState((state) => {
-													state.data.sort(comparisonFunct);
-													return { sortingBy: title, data: state.data };
-												});
-											}}
-											isCurrentSort={this.state.sortingBy === title}
-										/>
-									);
-								})}
-							</tr>
-						</thead>
-						<tbody className="table-wrapper">
-							{this.state.data.map((record, i) => {
-								const width = `${100 / this.props.columns.length}%`;
+	return (
+		<div className="pb-0 h-100percent w-100percent">
+			<div className="pb-0 h-100percent table-wrapper w-100percent">
+				<Table striped bordered className="mb-0 fixed white-bg border-table">
+					<thead className="fixed bg-white">
+						<tr>
+							{columns.map((title, index, array) => {
+								let sortingFunctAsc = sortingFunct(title.type, index);
 								return (
-									<tr key={i}>
-										{record.map((col, index) => {
-											return (
-												<td
-													key={index}
-													className="table-data"
-													style={{ width, maxWidth: width }}
-												>
-													{col.type === "time" ? (
-														<Moment date={col.value} format="YYYY-MM-DD HH:mm:ss" />
-													) : col.type === "text" ? (
-														col.value
-													) : col.type === "timeDuration" ? (
-														<Moment
-															duration={record.first}
-															date={record.last}
-															format="D [days], H [hours], m [minutes]"
-														/>
-													) : (
-														""
-													)}
-												</td>
-											);
-										})}
-									</tr>
+									<TableHeader
+										key={title.label}
+										width={`${100 / array.length}%`}
+										title={title.label}
+										doSort={(asc) => {
+											let comparisonFunct = sortingFunctAsc(asc);
+											setSortingBy(title);
+											setData([...data].sort(comparisonFunct));
+										}}
+										isCurrentSort={sortingBy === title}
+									/>
 								);
 							})}
-						</tbody>
-					</Table>
-				</div>
+						</tr>
+					</thead>
+					<tbody className="table-wrapper">
+						{data.map((record, index) => {
+							const width = `${100 / columns.length}%`;
+							return (
+								<TableRow
+									id={index}
+									key={index}
+									width={width}
+									data={record.filter((x) => x.type !== "link")}
+									link={
+										record.filter((x) => x.type === "link").length === 0
+											? null
+											: record.filter((x) => x.type === "link")[0].value
+									}
+								/>
+							);
+						})}
+					</tbody>
+				</Table>
 			</div>
-		);
-	}
-}
+		</div>
+	);
+};
 
 export default SortedTable;

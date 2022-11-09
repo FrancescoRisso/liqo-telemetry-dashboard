@@ -14,59 +14,53 @@ props:
 	- doSort: a function to sort the table (by passing a comparison function)
 	- isCurrentSort: whether this column is the one which is currently sorting the table
 	
-functions:
-	- componentDidUpdate(prevprops): if the table was sorted by this column, and it is not
+hooks:
+	- useEffect: if the table was sorted by this column, and it is not
 		anymore, updates the state accordingly 
+	
+context:
 	
 imported into:
 	- SortedTable
 	
-dependences:
+component dependences:
+	
+other dependences:
 	- sort images
 	
 */
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 import sortBoth from "../images/sort-both.svg";
 import sortUp from "../images/sort-up.svg";
 import sortDown from "../images/sort-down.svg";
 
-class TableHeader extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			sorted: null
-		};
-	}
+const TableHeader = ({ title, width, doSort, isCurrentSort }) => {
+	const [sorted, setSorted] = useState(null);
 
-	componentDidUpdate = (prevProps) => {
-		if (prevProps.isCurrentSort && !this.props.isCurrentSort) this.setState({ sorted: null });
-	};
+	useEffect(() => {
+		if (!isCurrentSort) setSorted(null);
+	}, [isCurrentSort]);
 
-	render() {
-		return (
-			<th
-				style={{ width: this.props.width }}
-				className="position center-text-vertically sort-th"
-				onClick={() => {
-					this.setState({ sorted: this.state.sorted !== "asc" ? "asc" : "desc" }, () => {
-						this.props.doSort(this.state.sorted !== "asc");
-					});
+	return (
+		<th
+			style={{ width: width }}
+			className="position center-text-vertically sort-th"
+			onClick={() => {
+				doSort(sorted === "asc");
+				setSorted(sorted !== "asc" ? "asc" : "desc");
+			}}
+		>
+			<div
+				className="sort-div center-vertically"
+				style={{
+					backgroundImage: `url(${sorted ? (sorted === "asc" ? sortUp : sortDown) : sortBoth})`
 				}}
-			>
-				<div
-					className="sort-div center-vertically"
-					style={{
-						backgroundImage: `url(${
-							this.state.sorted ? (this.state.sorted === "asc" ? sortUp : sortDown) : sortBoth
-						})`
-					}}
-				/>
-				{this.props.title}
-			</th>
-		);
-	}
-}
+			/>
+			{title}
+		</th>
+	);
+};
 
 export default TableHeader;
