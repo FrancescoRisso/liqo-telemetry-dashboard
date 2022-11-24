@@ -31,13 +31,13 @@ import React, { useContext, useEffect } from "react";
 
 import SortedTable from "./SortedTable";
 
-import ApiContext from "./ApiContext";
+import { ApiContext } from "./ApiContext";
 
 import { Button } from "react-bootstrap";
 import refresh from "../images/refresh.svg";
 
 const ClustersList = () => {
-	const { API } = useContext(ApiContext);
+	const API = useContext(ApiContext);
 
 	useEffect(() => {
 		API.dataLoaders.clusterSummary(false);

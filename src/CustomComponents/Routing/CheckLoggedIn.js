@@ -30,7 +30,7 @@ other dependences:
 import React, { useContext } from "react";
 
 import { Navigate, useParams } from "react-router-dom";
-import ApiContext from "../ApiContext";
+import { ApiContext } from "../ApiContext";
 import requireLogin from "../../requireLogin";
 
 import ClustersList from "../ClustersList";
@@ -38,7 +38,7 @@ import ClustersList from "../ClustersList";
 const CheckLoggedIn = ({ link }) => {
 	let { clusterID } = useParams();
 
-	let { API } = useContext(ApiContext);
+	let API = useContext(ApiContext);
 
 	if (requireLogin && !API.isTokenPresent()) return <Navigate to="/logbackin" />;
 
