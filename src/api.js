@@ -51,7 +51,7 @@ const fillGaps = (table) => {
 // Creates a fake table that mimic the real ones.
 // Useful only for testing
 const getFullTableFake = (tableName) => {
-	let lastRecord = [
+	const lastRecord = [
 		{
 			ip: "87.9.217.73",
 			geo: {
@@ -74,7 +74,7 @@ const getFullTableFake = (tableName) => {
 		}
 	];
 
-	let firstRecord = [
+	const firstRecord = [
 		{
 			ip: "87.9.217.73",
 			geo: {
@@ -131,8 +131,8 @@ const getFullTableFake = (tableName) => {
 const getFullTable = async (tableName) => {
 	if (!requireLogin) return getFullTableFake(tableName);
 
-	var docClient = new AWS.DynamoDB.DocumentClient();
-	var params = {
+	const docClient = new AWS.DynamoDB.DocumentClient();
+	let params = {
 		TableName: tableName
 	};
 

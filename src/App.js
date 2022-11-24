@@ -49,6 +49,8 @@ const App = () => {
 	const [APIExpiryTimeout, setAPIExpiryTimeout] = useState(null);
 	const [APIclusterSummary, setAPIclusterSummary] = useState([]);
 
+	// sets val as the current APIToken, and starts an expiryTime-long
+	// APIExpiryTimeout to reset the token when it expires
 	const setToken = (val, expiryTime) => {
 		// Remove existing reset timeouts
 		if (APIExpiryTimeout) clearTimeout(APIExpiryTimeout);
@@ -65,43 +67,39 @@ const App = () => {
 		setAPIExpiryTimeout(expiryTimeout);
 	};
 
+	// return whether there is a token currently active
 	const isTokenPresent = () => {
 		return APIToken !== null;
 	};
 
+	// tells whether the token is equal to a reference one
 	const isTokenSameAs = (reference) => {
 		return APIToken === reference;
 	};
 
-	const loadClusterSummary = (force) => {
+	// loads the cluster summary from the api, if not present yet.
+	// The force parameter forces the loading to reload the data even if it is present.
+	const loadClusterSummary = async (force) => {
 		if (force || APIclusterSummary === "Error" || APIclusterSummary.length === 0)
-			getFullTable("liqo-user-telemetry-last-record")
-				.then((data) => {
-					getFullTable("liqo-user-telemetry-first-record")
-						.then((firstData) => {
-							try {
-								data = data.map((entry) => {
-									entry.computedFirstSeen = firstData.filter(
-										(e) => e.clusterID === entry.clusterID
-									)[0].timestamp;
-									entry.computedUptime = entry.timestamp - entry.computedFirstSeen;
-									return entry;
-								});
-								setAPIclusterSummary(data);
-							} catch {
-								console.log("Some records in the 'last' table were not present in the 'first' table");
-								setAPIclusterSummary("Error");
-							}
-						})
-						.catch((err) => {
-							console.log(err);
-							setAPIclusterSummary("Error");
-						});
-				})
-				.catch((err) => {
-					console.log(err);
+			try {
+				let data = await getFullTable("liqo-user-telemetry-last-record");
+				const firstData = await getFullTable("liqo-user-telemetry-first-record");
+
+				try {
+					data = data.map((entry) => {
+						entry.computedFirstSeen = firstData.filter((e) => e.clusterID === entry.clusterID)[0].timestamp;
+						entry.computedUptime = entry.timestamp - entry.computedFirstSeen;
+						return entry;
+					});
+					setAPIclusterSummary(data);
+				} catch {
+					console.log("Some records in the 'last' table were not present in the 'first' table");
 					setAPIclusterSummary("Error");
-				});
+				}
+			} catch (err) {
+				console.log(err);
+				setAPIclusterSummary("Error");
+			}
 	};
 
 	return (
@@ -138,33 +136,3 @@ const App = () => {
 };
 
 export default App;
-
-/*
-
-description:
-	
-state:
-	
-props:
-	
-functions:
-	- setToken(val, expiryTime): sets val as the current APIToken, and starts an expiryTime-long
-		APIExpiryTimeout to reset the token when it expires
-	- isTokenPresent(): return whether there is a token currently active
-	- isTokenSameAs(reference): tells whether the token is equal to a reference one
-	- loadClusterSummary(force): loads the cluster summary from the api, if not present yet.
-		The force parameter forces the loading to reload the data even if it is present.
-	
-imported into:
-	
-dependences:
-	
-*/
-
-// class AppOld extends React.Component {
-// 	static contextType = ApiContext;
-
-// 	// componentDidUpdate(); // if token -> null, redirect to logbackin
-
-// 	render() {}
-// }
