@@ -9,6 +9,5 @@ imported into:
 
 */
 
-
-const requireLogin = false;
+const requireLogin: boolean = false;
 export default requireLogin;

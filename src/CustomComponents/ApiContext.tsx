@@ -31,18 +31,34 @@ other dependences:
 
 import React, { useState } from "react";
 
-import { getFullTable, login } from "../api";
+import { getFullTable, login, DatabaseRow, Database } from "../api";
 
-export const ApiContext = React.createContext();
+export const ApiContext = React.createContext({} as ApiContextStructure);
 
-export const ApiContextProvider = ({ children }) => {
-	const [APIToken, setAPIToken] = useState(null);
-	const [APIExpiryTimeout, setAPIExpiryTimeout] = useState(null);
-	const [APIclusterSummary, setAPIclusterSummary] = useState([]);
+export interface ApiContextStructure {
+	setToken: Function;
+	isTokenPresent: Function;
+	isTokenSameAs: Function;
+	dataLoaders: {
+		clusterSummary: Function;
+	};
+	data: {
+		clusterSummary: Database;
+	};
+}
+
+export interface ApiContextProviderProps {
+	children: JSX.Element | JSX.Element[] | string | string[];
+}
+
+export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
+	const [APIToken, setAPIToken] = useState<string | null>(null);
+	const [APIExpiryTimeout, setAPIExpiryTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
+	const [APIclusterSummary, setAPIclusterSummary] = useState<DatabaseRow[] | "Error">([]);
 
 	// sets val as the current APIToken, and starts an expiryTime-long
 	// APIExpiryTimeout to reset the token when it expires
-	const setToken = (val, expiryTime) => {
+	const setToken = (val: string, expiryTime: number) => {
 		// Remove existing reset timeouts
 		if (APIExpiryTimeout) clearTimeout(APIExpiryTimeout);
 
@@ -64,28 +80,34 @@ export const ApiContextProvider = ({ children }) => {
 	};
 
 	// tells whether the token is equal to a reference one
-	const isTokenSameAs = (reference) => {
+	const isTokenSameAs = (reference: string) => {
 		return APIToken === reference;
 	};
 
 	// loads the cluster summary from the api, if not present yet.
 	// The force parameter forces the loading to reload the data even if it is present.
-	const loadClusterSummary = async (force) => {
+	const loadClusterSummary = async (force: boolean) => {
 		if (force || APIclusterSummary === "Error" || APIclusterSummary.length === 0)
 			try {
 				let data = await getFullTable("liqo-user-telemetry-last-record");
 				const firstData = await getFullTable("liqo-user-telemetry-first-record");
 
-				try {
-					data = data.map((entry) => {
-						entry.computedFirstSeen = firstData.filter((e) => e.clusterID === entry.clusterID)[0].timestamp;
-						entry.computedUptime = entry.timestamp - entry.computedFirstSeen;
-						return entry;
-					});
-					setAPIclusterSummary(data);
-				} catch {
-					console.log("Some records in the 'last' table were not present in the 'first' table");
-					setAPIclusterSummary("Error");
+				if (data !== undefined && firstData !== undefined) {
+					try {
+						data = data.map((entry: DatabaseRow) => {
+							entry.computedFirstSeen = firstData.filter(
+								(e) => e.clusterID === entry.clusterID
+							)[0].timestamp;
+							if (entry.timestamp && entry.computedFirstSeen)
+								entry.computedUptime = entry.timestamp - entry.computedFirstSeen;
+							else entry.computedUptime = 0;
+							return entry;
+						});
+						setAPIclusterSummary(data);
+					} catch {
+						console.log("Some records in the 'last' table were not present in the 'first' table");
+						setAPIclusterSummary("Error");
+					}
 				}
 			} catch (err) {
 				console.log(err);

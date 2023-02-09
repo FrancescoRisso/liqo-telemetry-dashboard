@@ -5,8 +5,6 @@ description:
 	
 state:
 	
-props:
-	
 hooks:
 	
 context:
@@ -22,16 +20,12 @@ other dependences:
 	
 */
 
-import React from "react";
-
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
 
 const SideMenu = () => {
 	return (
 		<Nav
-			bg="dark"
 			variant="dark"
 			className="flex-column bg-dark sidebar page-height col-md-2 col-sm-12 d-md-block d-sm-block px-3"
 		>

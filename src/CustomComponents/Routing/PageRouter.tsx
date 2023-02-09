@@ -5,8 +5,6 @@ description:
 	
 state:
 	
-props:
-	
 hooks:
 	
 context:
@@ -24,13 +22,13 @@ other dependences:
 	
 */
 
-import React from "react";
-
 import { Login } from "../Login";
 import CheckLoggedIn from "./CheckLoggedIn";
 import RedirectFromHome from "./RedirectFromHome";
 
 import { Routes as Switch, Route } from "react-router-dom";
+
+export interface PageRouterProps {}
 
 const PageRouter = () => {
 	return (

@@ -6,9 +6,6 @@ description:
 state:
 	- 
 	
-props:
-	- 
-	
 hooks:
 	- 
 	
@@ -26,9 +23,11 @@ other dependences:
 	
 */
 
-import React from "react";
+export interface ClusterDetailsProps {
+	
+}
 
-const ClusterDetails = (props) => {
+const ClusterDetails = ({}:ClusterDetailsProps) => {
 	return (
 		<>
 			<p>Test</p>

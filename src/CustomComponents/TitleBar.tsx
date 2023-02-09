@@ -5,8 +5,6 @@ description:
 	
 state:
 	
-props:
-	
 hooks:
 	
 context:
@@ -18,12 +16,12 @@ component dependences:
 	
 other dependences:
 	- React-bootstrap components
+	- requireLogin
 	
 */
 
-import React from "react";
-
 import { Container, Navbar } from "react-bootstrap";
+import requireLogin from "../requireLogin";
 
 const TitleBar = () => {
 	return (
@@ -37,7 +35,7 @@ const TitleBar = () => {
 						height="30"
 						className="d-inline-block align-top"
 					/>{" "}
-					Usage telemetry dashboard
+					Usage telemetry dashboard {requireLogin? "":"- WARNING: using old data"}
 				</Navbar.Brand>
 			</Container>
 		</Navbar>

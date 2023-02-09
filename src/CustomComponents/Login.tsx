@@ -5,9 +5,6 @@ description:
 	
 state:
 	
-props:
-	- text: the text to be displayed above the login button
-	
 hooks:
 	
 context:
@@ -22,11 +19,13 @@ other dependences:
 	
 */
 
-import React from "react";
-
 import padlock from "../images/padlock.svg";
 
-const Login = ({ text }) => {
+export interface LoginProps {
+	text: string;	// the text to be displayed above the login button
+}
+
+export const Login = ({ text }: LoginProps) => {
 	return (
 		<div className="center">
 			<p className="bigger-text text-center">{text}</p>
@@ -45,5 +44,3 @@ const Login = ({ text }) => {
 		</div>
 	);
 };
-
-export default Login;

@@ -8,8 +8,6 @@ state:
 	- APIExpiryTimeout: a timeout that expires when the token becomes invalid
 	- APIclusterSummary[]: a list containing the summary data of the clusters
 	
-props:
-	
 hooks:
 	
 context:
@@ -23,14 +21,12 @@ component dependences:
 	- PageRouter
 	- ApiContext
 	
-	other dependences:
+other dependences:
 	- React-bootstrap components
 	- React-router-dom components
 	- css files
 	
 */
-
-import React from "react";
 
 import TitleBar from "./CustomComponents/TitleBar";
 import SideMenu from "./CustomComponents/SideMenu";

@@ -38,16 +38,56 @@ component dependences:
 	
 */
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 
 import { Table } from "react-bootstrap";
 
-const SortedTable = ({ columns, data: values, sortingFunct }) => {
-	const [sortingBy, setSortingBy] = useState(null);
-	const [data, setData] = useState([]);
+export interface TextColumn {
+	type: "text";
+	value: string;
+}
+
+export interface LinkColumn {
+	type: "link";
+	value: string;
+}
+
+export interface TimeColumn {
+	type: "time";
+	value: number;
+}
+
+export interface DurationColumn {
+	type: "timeDuration";
+	last: number;
+	first: number;
+	value?: undefined; //unused
+}
+
+export type TableColumn = TextColumn | LinkColumn | TimeColumn | DurationColumn;
+export type TableRowType = TableColumn[];
+
+export function isDurationColumn (obj: TableColumn): obj is DurationColumn {
+	return obj.type === "timeDuration";
+};
+
+interface TableColumnTitle {
+	type: "text" | "timeDuration";
+	label: string;
+}
+
+export interface SortedTableProps {
+	columns: TableColumnTitle[];
+	values: TableRowType[];
+	sortingFunct: Function;
+}
+
+const SortedTable = ({ columns, values, sortingFunct }: SortedTableProps) => {
+	const [sortingBy, setSortingBy] = useState<string | null>(null);
+	const [data, setData] = useState<TableRowType[]>([]);
 
 	useEffect(() => {
 		setData(values);
@@ -61,18 +101,18 @@ const SortedTable = ({ columns, data: values, sortingFunct }) => {
 					<thead className="fixed bg-white">
 						<tr>
 							{columns.map((title, index, array) => {
-								let sortingFunctAsc = sortingFunct(title.type, index);
+								let sortingFunctAsc = sortingFunct(index);
 								return (
 									<TableHeader
 										key={title.label}
 										width={`${100 / array.length}%`}
 										title={title.label}
-										doSort={(asc) => {
+										doSort={(asc: boolean) => {
 											let comparisonFunct = sortingFunctAsc(asc);
-											setSortingBy(title);
+											setSortingBy(title.label);
 											setData([...data].sort(comparisonFunct));
 										}}
-										isCurrentSort={sortingBy === title}
+										isCurrentSort={sortingBy === title.label}
 									/>
 								);
 							})}
@@ -81,17 +121,20 @@ const SortedTable = ({ columns, data: values, sortingFunct }) => {
 					<tbody className="table-wrapper">
 						{data.map((record, index) => {
 							const width = `${100 / columns.length}%`;
+							let link: string | undefined = undefined;
+							if (record.filter((x) => x.type === "link").length !== 0) {
+								const linkSetting: LinkColumn = record.filter(
+									(x) => x.type === "link"
+								)[0] as LinkColumn;
+								link = linkSetting.value;
+							}
 							return (
 								<TableRow
 									id={index}
 									key={index}
 									width={width}
 									data={record.filter((x) => x.type !== "link")}
-									link={
-										record.filter((x) => x.type === "link").length === 0
-											? null
-											: record.filter((x) => x.type === "link")[0].value
-									}
+									link={link}
 								/>
 							);
 						})}
