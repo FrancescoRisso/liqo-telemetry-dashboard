@@ -6,7 +6,8 @@ description:
 state:
 	- APIToken: the token received from cognito
 	- APIExpiryTimeout: a timeout that expires when the token becomes invalid
-	- APIclusterSummary[]: a list containing the summary data of the clusters
+	- APIclusterSummary: the summary data of the clusters
+	- APIclusterData: all the data data of the specific clusters
 	
 props:
 	- children: the child that will be able to use this context
@@ -31,8 +32,8 @@ other dependences:
 
 import React, { useState } from "react";
 
-import { getFullTable, login } from "../api";
-import { ApiContextStructure, ClusterGenericInfo, DatabaseRow, IP } from "../types";
+import { getClusterData, getFullTable, login } from "../api";
+import { ApiContextStructure, ClusterGenericInfo, DatabaseRow, IP, ClusterDataType, Telemetry } from "../types";
 import { countPeers } from "../utils";
 
 export const ApiContext = React.createContext({} as ApiContextStructure);
@@ -45,6 +46,7 @@ export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
 	const [APIToken, setAPIToken] = useState<string | null>(null);
 	const [APIExpiryTimeout, setAPIExpiryTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 	const [APIclusterSummary, setAPIclusterSummary] = useState<"Error" | Record<string, ClusterGenericInfo>>({});
+	const [APIclusterData, setAPIclusterData] = useState<Record<string, "Error" | ClusterDataType[]>>({});
 
 	// sets val as the current APIToken, and starts an expiryTime-long
 	// APIExpiryTimeout to reset the token when it expires
@@ -115,6 +117,27 @@ export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
 			}
 	};
 
+	const loadClusterData = async (clusterID: string) => {
+		if (APIclusterData[clusterID] === "Error" || APIclusterData[clusterID] === undefined) {
+			try {
+				const apiData = (await getClusterData(clusterID)) as DatabaseRow[];
+				const thisClusterData = apiData.map((record: DatabaseRow) => {
+					const ip: IP | undefined = record.ip;
+					const telemetry: Telemetry = record.telemetry;
+					const timestamp: number = record.timestamp;
+					const inPeers: number = countPeers("incoming", record.telemetry);
+					const outPeers: number = countPeers("outgoing", record.telemetry);
+					const finalValue: ClusterDataType = { ip, telemetry, timestamp, inPeers, outPeers };
+					return finalValue;
+				});
+				setAPIclusterData({ ...APIclusterData, ...{ [clusterID]: thisClusterData } });
+			} catch (err) {
+				console.log(`Could not load data for clusterID = ${clusterID}`);
+				console.log(err);
+			}
+		}
+	};
+
 	return (
 		<ApiContext.Provider
 			value={{
@@ -123,11 +146,11 @@ export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
 				isTokenSameAs: isTokenSameAs,
 				dataLoaders: {
 					clusterSummary: loadClusterSummary,
-					clusterData: () => {}
+					clusterData: loadClusterData
 				},
 				data: {
 					clusterSummary: APIclusterSummary,
-					clusterData: {}
+					clusterData: APIclusterData
 				}
 			}}
 		>

@@ -1,8 +1,11 @@
 import * as AWS from "aws-sdk";
-import requireLogin from "./requireLogin";
+
 import lastRecordCached from "./cached-last-record-table";
 import firstRecordCached from "./cached-first-record-table";
+import detailsCached from "./cached-cluster-details";
+
 import { IP, Telemetry, DatabaseRow, PeeringInfo, AWSParams } from "./types";
+import { requireLogin } from "./devSettings";
 
 const deepCopy = (original: any): any => {
 	return JSON.parse(JSON.stringify(original)) as typeof original;
@@ -104,4 +107,22 @@ const getFullTable = async (tableName: string) => {
 	return fillGaps(database);
 };
 
-export { login, getFullTable };
+// Retreives all the data of a specific cluster from the database
+const getClusterData = async (clusterID: string) => {
+	if (!requireLogin) return detailsCached[clusterID];
+
+	const docClient = new AWS.DynamoDB.DocumentClient();
+	let params = {
+		TableName: "liqo-user-telemetry",
+		ExpressionAttributeValues: {
+			":c": clusterID
+		},
+		KeyConditionExpression: "clusterID = :c"
+	};
+
+	const result = await docClient.query(params).promise();
+	console.log({ [clusterID]: result.Items });
+	return result.Items;
+};
+
+export { login, getFullTable, getClusterData };

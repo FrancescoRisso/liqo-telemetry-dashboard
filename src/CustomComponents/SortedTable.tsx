@@ -64,49 +64,51 @@ const SortedTable = ({ columns, values, sortingFunct }: SortedTableProps) => {
 	return (
 		<div className="pb-0 h-100percent w-100percent">
 			<div className="pb-0 h-100percent table-wrapper w-100percent">
-				<Table striped bordered className="mb-0 fixed white-bg border-table">
-					<thead className="fixed bg-white">
-						<tr>
-							{columns.map((title, index, array) => {
-								let sortingFunctAsc = sortingFunct(index);
+				<div className="border">
+					<Table striped bordered className="mb-0 fixed white-bg border-table">
+						<thead className="fixed bg-white">
+							<tr>
+								{columns.map((title, index, array) => {
+									let sortingFunctAsc = sortingFunct(index);
+									return (
+										<TableHeader
+											key={title.label}
+											width={`${100 / array.length}%`}
+											title={title.label}
+											doSort={(asc: boolean) => {
+												let comparisonFunct = sortingFunctAsc(asc);
+												setSortingBy(title.label);
+												setData([...data].sort(comparisonFunct));
+											}}
+											isCurrentSort={sortingBy === title.label}
+										/>
+									);
+								})}
+							</tr>
+						</thead>
+						<tbody className="table-wrapper">
+							{data.map((record, index) => {
+								const width = `${100 / columns.length}%`;
+								let link: string | undefined = undefined;
+								if (record.filter((x) => x.type === "link").length !== 0) {
+									const linkSetting: LinkColumn = record.filter(
+										(x) => x.type === "link"
+									)[0] as LinkColumn;
+									link = linkSetting.value;
+								}
 								return (
-									<TableHeader
-										key={title.label}
-										width={`${100 / array.length}%`}
-										title={title.label}
-										doSort={(asc: boolean) => {
-											let comparisonFunct = sortingFunctAsc(asc);
-											setSortingBy(title.label);
-											setData([...data].sort(comparisonFunct));
-										}}
-										isCurrentSort={sortingBy === title.label}
+									<TableRow
+										id={index}
+										key={index}
+										width={width}
+										data={record.filter((x) => x.type !== "link")}
+										link={link}
 									/>
 								);
 							})}
-						</tr>
-					</thead>
-					<tbody className="table-wrapper">
-						{data.map((record, index) => {
-							const width = `${100 / columns.length}%`;
-							let link: string | undefined = undefined;
-							if (record.filter((x) => x.type === "link").length !== 0) {
-								const linkSetting: LinkColumn = record.filter(
-									(x) => x.type === "link"
-								)[0] as LinkColumn;
-								link = linkSetting.value;
-							}
-							return (
-								<TableRow
-									id={index}
-									key={index}
-									width={width}
-									data={record.filter((x) => x.type !== "link")}
-									link={link}
-								/>
-							);
-						})}
-					</tbody>
-				</Table>
+						</tbody>
+					</Table>
+				</div>
 			</div>
 		</div>
 	);

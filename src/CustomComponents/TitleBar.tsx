@@ -21,7 +21,7 @@ other dependences:
 */
 
 import { Container, Navbar } from "react-bootstrap";
-import requireLogin from "../requireLogin";
+import { requireLogin } from "../devSettings";
 
 const TitleBar = () => {
 	return (
@@ -35,7 +35,7 @@ const TitleBar = () => {
 						height="30"
 						className="d-inline-block align-top"
 					/>{" "}
-					Usage telemetry dashboard {requireLogin? "":"- WARNING: using old data"}
+					Usage telemetry dashboard {requireLogin ? "" : "- WARNING: using old data"}
 				</Navbar.Brand>
 			</Container>
 		</Navbar>

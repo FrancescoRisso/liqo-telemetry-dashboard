@@ -6,6 +6,14 @@
 	height: auto;
 }
 
+.h-30percent {
+	height: 30%;
+}
+
+.h-70percent {
+	height: 70%;
+}
+
 .h-100percent {
 	height: 100%;
 }
@@ -60,7 +68,7 @@
 }
 
 .table-wrapper {
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .fixed {
@@ -102,4 +110,8 @@
 
 .clickable:hover {
 	cursor: pointer;
+}
+
+#cluster-title {
+	font-size: 4vh;
 }
