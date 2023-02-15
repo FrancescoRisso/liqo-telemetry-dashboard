@@ -15,18 +15,18 @@ imported into:
 	- SortedTable
 	
 component dependences:
-	
+	- TableCell	
+
 other dependences:
-	- moment
 	- react-router-dom components
 	
 */
 
 import { useState } from "react";
 
-import Moment from "react-moment";
 import { Navigate } from "react-router-dom";
 import { TableRowType, TableColumn } from "../types";
+import TableCell from './TableCell';
 
 export interface TableRowProps {
 	data: TableRowType; //the content of the row
@@ -49,17 +49,7 @@ const TableRow = ({ data, id, width, link }: TableRowProps) => {
 		>
 			{data.map((col: TableColumn, index: number) => {
 				return (
-					<td key={index} className="table-data" style={{ width: width, maxWidth: width }}>
-						{col.type === "time" ? (
-							<Moment date={col.value} format="YYYY-MM-DD HH:mm:ss" />
-						) : col.type === "text" ? (
-							col.value
-						) : col.type === "timeDuration" ? (
-							<Moment duration={col.last} date={col.first} format="D [days], H [hours], m [minutes]" />
-						) : (
-							""
-						)}
-					</td>
+					<TableCell key={index} value={col} width={width}/>
 				);
 			})}
 		</tr>
