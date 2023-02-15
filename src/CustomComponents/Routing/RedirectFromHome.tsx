@@ -36,11 +36,9 @@ import { useContext, useEffect, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 import { ApiContext } from "../ApiContext";
 
-export interface RedirectFromHomeProps {
-	
-}
+export interface RedirectFromHomeProps {}
 
-const RedirectFromHome = ({}:RedirectFromHomeProps) => {
+const RedirectFromHome = () => {
 	const [params] = useSearchParams();
 
 	const API = useContext(ApiContext);
@@ -55,12 +53,12 @@ const RedirectFromHome = ({}:RedirectFromHomeProps) => {
 			API.setToken(params.get("id_token"), params.get("expires_in"));
 			setRedirect(true);
 		} else if (!redirect) setRedirect(true);
-	}, []);
+	}, [API, params, redirect]);
 
 	if (!redirect) return <></>;
 
 	if (API.isTokenPresent()) return <Navigate to="/clusters" />;
 	return <Navigate to="/login" />;
-}
+};
 
 export default RedirectFromHome;

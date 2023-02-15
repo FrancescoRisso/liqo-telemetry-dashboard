@@ -27,13 +27,16 @@ other dependences:
 
 import { useContext, useEffect } from "react";
 
-import SortedTable, { LinkColumn, TableColumn, TableRowType, isDurationColumn } from "./SortedTable";
+import SortedTable from "./SortedTable";
 
 import { ApiContext } from "./ApiContext";
 
 import { Button } from "react-bootstrap";
 import refresh from "../images/refresh.svg";
-import { TextColumn, DurationColumn, TimeColumn } from "./SortedTable";
+import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../types";
+import { Entries } from "type-fest";
+// import { providerToIcon, sortTable } from "../utils";
+import { sortTable } from "../utils";
 
 // export interface ClustersListProps {}
 
@@ -44,33 +47,9 @@ const ClustersList = () => {
 		API.dataLoaders.clusterSummary(false);
 	}, [API.dataLoaders]);
 
-	const sortClusterSummary: Function = (fieldNo: number) => {
-		return (asc: boolean) => {
-			return (rowA: TableRowType, rowB: TableRowType) => {
-				const fieldA: TableColumn = rowA[fieldNo];
-				const fieldB: TableColumn = rowB[fieldNo];
+	if (API.data.clusterSummary === "Error") return <p>Something went wrong. See console for details</p>;
 
-				let a: number | string;
-				let b: number | string;
-
-				if (isDurationColumn(fieldA) && isDurationColumn(fieldB)) {
-					a = fieldA.last - fieldA.first;
-					b = fieldB.last - fieldB.first;
-				} else if (!isDurationColumn(fieldA) && !isDurationColumn(fieldB)) {
-					a = fieldA.value;
-					b = fieldB.value;
-				} else return 0;
-
-				if (asc) return a === b ? 0 : a > b ? -1 : 1;
-				return a === b ? 0 : a < b ? -1 : 1;
-			};
-		};
-	};
-
-	if (API.data.clusterSummary === "Error" || !Array.isArray(API.data.clusterSummary))
-		return <p>Something went wrong. See console for details</p>;
-
-	if (API.data.clusterSummary.length === 0) return <div className="spinner-border"></div>;
+	if (JSON.stringify(API.data.clusterSummary) === "{}") return <div className="spinner-border"></div>;
 
 	return (
 		<div className="h-100percent">
@@ -87,40 +66,29 @@ const ClustersList = () => {
 					<img alt="Refresh" src={refresh} style={{ filter: "invert(1)", height: "15px" }} />
 				</Button>
 			</div>
-			<div style={{ height: `calc(100% - 60px` }}>
+			<div style={{ height: `calc(100% - 60px` }} className="pb-2">
 				<SortedTable
-					values={API.data.clusterSummary.map((record, i): TableRowType => {
-						const clusterId: TextColumn = { type: "text", value: record.clusterID };
-						const uptime: DurationColumn = {
-							type: "timeDuration",
-							last: record.computedFirstSeen,
-							first: record.timestamp
-						};
-						const lastSeen: TimeColumn = { type: "time", value: record.timestamp };
-						const provider: TextColumn = { type: "text", value: record.telemetry.provider || "N.A." };
-						const link: LinkColumn = { type: "link", value: `/cluster/${record.clusterID}` };
-						const inPeers: TextColumn = {
-							type: "text",
-							value: String(
-								record.telemetry?.peeringInfo === undefined
-									? 0
-									: record.telemetry.peeringInfo.filter((pi) =>
-											pi.incoming === undefined ? false : pi.incoming.enabled
-									  ).length
-							)
-						};
-						const outPeers: TextColumn = {
-							type: "text",
-							value: String(
-								record.telemetry?.peeringInfo === undefined
-									? 0
-									: record.telemetry.peeringInfo.filter((pi) =>
-											pi.outgoing === undefined ? false : pi.outgoing.enabled
-									  ).length
-							)
-						};
-						return [clusterId, uptime, lastSeen, provider, inPeers, outPeers, link];
-					})}
+					values={(Object.entries(API.data.clusterSummary) as Entries<typeof API.data.clusterSummary>).map(
+						([clusterID, record]): TableRowType => {
+							const clusterIdCol: TextColumn = { type: "text", value: clusterID };
+							const uptime: DurationColumn = {
+								type: "timeDuration",
+								last: record.computedFirstSeen,
+								first: record.lastSeen
+							};
+							const lastSeen: TimeColumn = { type: "time", value: record.lastSeen };
+							// const provider: IconColumn = {
+							// 	type: "textWithIcon",
+							// 	value: record.provider,
+							// 	icon: providerToIcon(record.provider)
+							// };
+							const provider: TextColumn = { type: "text", value: record.provider };
+							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
+							const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
+							const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
+							return [clusterIdCol, uptime, lastSeen, provider, inPeers, outPeers, link];
+						}
+					)}
 					columns={[
 						{ type: "text", label: "Cluster ID" },
 						{ type: "timeDuration", label: "Uptime" },
@@ -129,7 +97,7 @@ const ClustersList = () => {
 						{ type: "text", label: "#IN peers" },
 						{ type: "text", label: "#OUT peers" }
 					]}
-					sortingFunct={sortClusterSummary}
+					sortingFunct={sortTable}
 				/>
 			</div>
 		</div>

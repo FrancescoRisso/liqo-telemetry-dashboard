@@ -3,6 +3,12 @@
 # my temporary tests
 /test
 
+# cached things
+cached-*
+
+# boh
+./liqo-telemetry-dashboard
+
 # dependencies
 /node_modules
 /.pnp

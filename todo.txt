@@ -1,7 +1,0 @@
-	typescript
-OK	function components
-	manipolazione dati in file utils.js (App)
-OK	.then -> async/await (App)
-OK	separate context (https://github.com/netgroup-polito/CrownLabs/blob/master/frontend/src/contexts/AuthContext.tsx)
-	SortedTable fare componente element
-OK	const invece di let (api)

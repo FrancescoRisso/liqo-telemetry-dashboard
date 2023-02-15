@@ -1,74 +1,8 @@
 import * as AWS from "aws-sdk";
 import requireLogin from "./requireLogin";
-import lastRecordCached from "./last-record-table-cached.js";
-import firstRecordCached from "./first-record-table-cached.js";
-
-// interfaces taken from https://github.com/liqotech/user-telemetry/blob/main/src/usertelemetryitem.ts
-
-interface ipInfo {
-	range: [number, number];
-	country: string;
-	region: string;
-	eu: "0" | "1";
-	timezone: string;
-	city: string;
-	ll: [number, number];
-	metro: number;
-	area: number;
-}
-
-interface NamespaceInfo {
-	uid: string;
-	mappingStrategy: "DefaultName" | "EnforceSameName";
-	offloadingStrategy: "Local" | "Remote" | "LocalAndRemote";
-	hasClusterSelector: boolean;
-	numOffloadedPods: Map<string, number>;
-}
-
-interface PeeringDetails {
-	enabled: boolean;
-	resources?: Map<string, string>;
-}
-
-interface PeeringInfo {
-	remoteClusterID?: string;
-	method?: "InBand" | "OutOfBand" | "N.A."; // Added a N.A value
-	discoveryType?: "LAN" | "Manual" | "IncomingPeering" | "N.A."; // Added a N.A value
-	latency?: number;
-	incoming?: PeeringDetails;
-	outgoing?: PeeringDetails;
-}
-
-interface Telemetry {
-	clusterID?: string;
-	provider?: string;
-	liqoVersion?: string;
-	kubernetesVersion?: string;
-	peeringInfo?: PeeringInfo[];
-	namespacesInfo?: NamespaceInfo[];
-}
-
-interface IP {
-	ip: string;
-	geo?: ipInfo | undefined;
-	// TODO: add provider info
-}
-
-export interface DatabaseRow {
-	clusterID: string;
-	ip?: IP;
-	telemetry: Telemetry;
-	timestamp: number;
-	computedFirstSeen: number; // Computed by the Api context functions
-	computedUptime: number; // Computed by the Api context functions
-}
-
-export type Database = DatabaseRow[] | "Error";
-
-interface AWSParams {
-	TableName: string;
-	ExclusiveStartKey?: any;
-}
+import lastRecordCached from "./cached-last-record-table";
+import firstRecordCached from "./cached-first-record-table";
+import { IP, Telemetry, DatabaseRow, PeeringInfo, AWSParams } from "./types";
 
 const deepCopy = (original: any): any => {
 	return JSON.parse(JSON.stringify(original)) as typeof original;

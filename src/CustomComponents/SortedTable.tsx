@@ -44,40 +44,7 @@ import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 
 import { Table } from "react-bootstrap";
-
-export interface TextColumn {
-	type: "text";
-	value: string;
-}
-
-export interface LinkColumn {
-	type: "link";
-	value: string;
-}
-
-export interface TimeColumn {
-	type: "time";
-	value: number;
-}
-
-export interface DurationColumn {
-	type: "timeDuration";
-	last: number;
-	first: number;
-	value?: undefined; //unused
-}
-
-export type TableColumn = TextColumn | LinkColumn | TimeColumn | DurationColumn;
-export type TableRowType = TableColumn[];
-
-export function isDurationColumn (obj: TableColumn): obj is DurationColumn {
-	return obj.type === "timeDuration";
-};
-
-interface TableColumnTitle {
-	type: "text" | "timeDuration";
-	label: string;
-}
+import { TableColumnTitle, TableRowType, LinkColumn } from "../types";
 
 export interface SortedTableProps {
 	columns: TableColumnTitle[];

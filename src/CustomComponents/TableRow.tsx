@@ -26,7 +26,7 @@ import { useState } from "react";
 
 import Moment from "react-moment";
 import { Navigate } from "react-router-dom";
-import { TableRowType, TableColumn } from "./SortedTable";
+import { TableRowType, TableColumn } from "../types";
 
 export interface TableRowProps {
 	data: TableRowType; //the content of the row
