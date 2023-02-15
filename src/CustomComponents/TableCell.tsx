@@ -49,6 +49,13 @@ const TableCell = ({ width, value }: TableCellProps) => {
 			</td>
 		);
 
+	if (value.type === "textWithIcon")
+		return (
+			<td className="table-data" style={{ width: width, maxWidth: width }}>
+				<img src={value.icon} alt="" height={"20vh"} /> &nbsp;{value.value}
+			</td>
+		);
+
 	return <></>;
 };
 

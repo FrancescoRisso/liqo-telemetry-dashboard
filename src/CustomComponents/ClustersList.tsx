@@ -35,8 +35,7 @@ import { Button } from "react-bootstrap";
 import refresh from "../images/refresh.svg";
 import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../types";
 import { Entries } from "type-fest";
-// import { providerToIcon, sortTable } from "../utils";
-import { sortTable } from "../utils";
+import { providerToIcon, sortTable } from "../utils";
 
 // export interface ClustersListProps {}
 
@@ -77,12 +76,11 @@ const ClustersList = () => {
 								first: record.lastSeen
 							};
 							const lastSeen: TimeColumn = { type: "time", value: record.lastSeen };
-							// const provider: IconColumn = {
-							// 	type: "textWithIcon",
-							// 	value: record.provider,
-							// 	icon: providerToIcon(record.provider)
-							// };
-							const provider: TextColumn = { type: "text", value: record.provider };
+							const provider: IconColumn = {
+								type: "textWithIcon",
+								value: record.provider,
+								icon: providerToIcon(record.provider)
+							};
 							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
 							const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
 							const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };

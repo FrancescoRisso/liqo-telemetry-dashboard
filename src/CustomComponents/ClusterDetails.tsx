@@ -31,8 +31,7 @@ import ClusterTitle from "./ClusterTitle";
 import { ApiContext } from "./ApiContext";
 import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount } from "../types";
 import SortedTable from "./SortedTable";
-import { sortTable } from "../utils";
-// import { providerToIcon, sortTable } from "../utils";
+import { providerToIcon, sortTable } from "../utils";
 
 export interface ClusterDetailsProps {
 	clusterID: string;
@@ -124,12 +123,11 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 					]}
 					values={thisClusterData.map((record) => {
 						const timestamp: TimeColumn = { type: "time", value: record.timestamp };
-						// const provider: IconColumn = {
-						// 	type: "textWithIcon",
-						// 	value: record.telemetry.provider || "N.A.",
-						// 	icon: providerToIcon(record.telemetry.provider || "N.A.")
-						// };
-						const provider: TextColumn = { type: "text", value: record.telemetry.provider || "N.A." };
+						const provider: IconColumn = {
+							type: "textWithIcon",
+							value: record.telemetry.provider || "N.A.",
+							icon: providerToIcon(record.telemetry.provider || "N.A.")
+						};
 						const version: TextColumn = { type: "text", value: record.telemetry.liqoVersion || "N.A." };
 						const k8sVersion: TextColumn = {
 							type: "text",

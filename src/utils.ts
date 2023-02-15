@@ -1,13 +1,13 @@
 import { PeeringInfo, Telemetry, isDurationColumn } from "./types";
 import { TableColumn, TableRowType, TableSortingFunction } from "./types";
 
-// import aksLogo from "./images/providers_logos/aks.svg"
-// import k3sLogo from "./images/providers_logos/k3s.svg"
-// import openshiftLogo from "./images/providers_logos/openshift.svg"
-// import awsLogo from "./images/providers_logos/aws.svg"
-// import googleLogo from "./images/providers_logos/google.svg"
-// import k8sLogo from "./images/providers_logos/k8s.svg"
-// import othersLogo from "./images/providers_logos/others.svg"
+import aksLogo from "./images/providers_logos/aks.svg"
+import k3sLogo from "./images/providers_logos/k3s.svg"
+import openshiftLogo from "./images/providers_logos/openshift.svg"
+import awsLogo from "./images/providers_logos/aws.svg"
+import googleLogo from "./images/providers_logos/google.svg"
+import k8sLogo from "./images/providers_logos/k8s.svg"
+import othersLogo from "./images/providers_logos/others.svg"
 
 export const sortTable: TableSortingFunction = (fieldNo: number) => {
 	return (asc: boolean) => {
@@ -40,15 +40,15 @@ export const countPeers = (direction: "incoming" | "outgoing", telemetry: Teleme
 	).length;
 };
 
-// export const providerToIcon = (provider: string) =>{
-// 	switch(provider){
-// 		case "aks": return aksLogo;
-// 		case "eks": return awsLogo;
-// 		case "gke": return googleLogo;
-// 		case "k3s": return k3sLogo;
-// 		case "kind": return othersLogo; // to be modified
-// 		case "kubeadm": return k8sLogo;
-// 		case "openshift": return openshiftLogo;
-// 		default: return othersLogo;
-// 	}
-// }
+export const providerToIcon = (provider: string) =>{
+	switch(provider){
+		case "aks": return aksLogo;
+		case "eks": return awsLogo;
+		case "gke": return googleLogo;
+		case "k3s": return k3sLogo;
+		case "kind": return othersLogo; // to be modified
+		case "kubeadm": return k8sLogo;
+		case "openshift": return openshiftLogo;
+		default: return othersLogo;
+	}
+}
