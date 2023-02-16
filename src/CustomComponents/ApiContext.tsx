@@ -93,6 +93,7 @@ export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
 							)[0].timestamp;
 							const lastSeen: number = entry.timestamp;
 							const provider: string = entry.telemetry.provider || "N.A.";
+							const liqoVersion: string = entry.telemetry.liqoVersion || "N.A.";
 							const inPeers: number = countPeers("incoming", entry.telemetry);
 							const outPeers: number = countPeers("outgoing", entry.telemetry);
 							const final: ClusterGenericInfo = {
@@ -100,6 +101,7 @@ export const ApiContextProvider = ({ children }: ApiContextProviderProps) => {
 								computedFirstSeen,
 								lastSeen,
 								provider,
+								liqoVersion,
 								inPeers,
 								outPeers
 							};

@@ -81,15 +81,25 @@ const ClustersList = () => {
 								value: record.provider,
 								icon: providerToIcon(record.provider)
 							};
-
 							const location: TextColumn = {
 								type: "text",
 								value: getLocationString(API.data.clusterSummary, clusterID)
 							};
-							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
+							const liqoVersion: TextColumn = { type: "text", value: record.liqoVersion };
 							const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
 							const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
-							return [clusterIdCol, uptime, lastSeen, provider, location, inPeers, outPeers, link];
+							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
+							return [
+								clusterIdCol,
+								uptime,
+								lastSeen,
+								provider,
+								location,
+								liqoVersion,
+								inPeers,
+								outPeers,
+								link
+							];
 						}
 					)}
 					columns={[
@@ -98,6 +108,7 @@ const ClustersList = () => {
 						{ type: "text", label: "Last seen" },
 						{ type: "text", label: "Provider" },
 						{ type: "text", label: "Location" },
+						{ type: "text", label: "Liqo version" },
 						{ type: "text", label: "#IN peers" },
 						{ type: "text", label: "#OUT peers" }
 					]}
