@@ -45,7 +45,7 @@ const TableCell = ({ width, value }: TableCellProps) => {
 	if (value.type === "timeDuration")
 		return (
 			<td className="table-data" style={{ width: width, maxWidth: width }}>
-				<Moment duration={value.last} date={value.first} format="D [days], H [hours], m [minutes]" />
+				<Moment duration={value.first} date={value.last} format="D[d], H[h], m[m]" />
 			</td>
 		);
 

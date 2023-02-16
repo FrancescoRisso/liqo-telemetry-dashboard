@@ -35,7 +35,7 @@ import { Button } from "react-bootstrap";
 import refresh from "../images/refresh.svg";
 import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../types";
 import { Entries } from "type-fest";
-import { providerToIcon, sortTable } from "../utils";
+import { providerToIcon, sortTable, getLocationString } from '../utils';
 
 // export interface ClustersListProps {}
 
@@ -72,8 +72,8 @@ const ClustersList = () => {
 							const clusterIdCol: TextColumn = { type: "text", value: clusterID };
 							const uptime: DurationColumn = {
 								type: "timeDuration",
-								last: record.computedFirstSeen,
-								first: record.lastSeen
+								first: record.computedFirstSeen,
+								last: record.lastSeen
 							};
 							const lastSeen: TimeColumn = { type: "time", value: record.lastSeen };
 							const provider: IconColumn = {
@@ -81,10 +81,15 @@ const ClustersList = () => {
 								value: record.provider,
 								icon: providerToIcon(record.provider)
 							};
+
+							const location: TextColumn = {
+								type: "text",
+								value: getLocationString(API.data.clusterSummary, clusterID)
+							};
 							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
 							const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
 							const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
-							return [clusterIdCol, uptime, lastSeen, provider, inPeers, outPeers, link];
+							return [clusterIdCol, uptime, lastSeen, provider, location, inPeers, outPeers, link];
 						}
 					)}
 					columns={[
@@ -92,6 +97,7 @@ const ClustersList = () => {
 						{ type: "timeDuration", label: "Uptime" },
 						{ type: "text", label: "Last seen" },
 						{ type: "text", label: "Provider" },
+						{ type: "text", label: "Location" },
 						{ type: "text", label: "#IN peers" },
 						{ type: "text", label: "#OUT peers" }
 					]}

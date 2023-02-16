@@ -85,10 +85,12 @@ const ClusterTitle = ({
 						</div>
 						<div className="col-6">
 							<div>Last IP address: {ip}</div>
-							<div>Max incoming peers: {peers?.max.in}</div>
-							<div>Avg incoming peers: {peers?.avg.in}</div>
-							<div>Max outgoing peers: {peers?.max.out}</div>
-							<div>Max outgoing peers: {peers?.avg.out}</div>
+							<div>
+								Incoming peers (avg/max): {peers?.avg.in.toFixed(2)} / {peers?.max.in}
+							</div>
+							<div>
+								Outgoing peers (avg/max): {peers?.avg.out.toFixed(2)} / {peers?.max.out}
+							</div>
 						</div>
 					</div>
 				</div>

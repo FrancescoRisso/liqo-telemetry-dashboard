@@ -31,7 +31,7 @@ import ClusterTitle from "./ClusterTitle";
 import { ApiContext } from "./ApiContext";
 import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount } from "../types";
 import SortedTable from "./SortedTable";
-import { providerToIcon, sortTable } from "../utils";
+import { providerToIcon, sortTable, getLocationString } from "../utils";
 
 export interface ClusterDetailsProps {
 	clusterID: string;
@@ -67,25 +67,9 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 		};
 	}, [thisClusterData]);
 
-	const country = useMemo(() => {
-		if (API.data.clusterSummary === "Error" || JSON.stringify(API.data.clusterSummary) === "{}") return "N.A.";
-		return API.data.clusterSummary[clusterID].ip?.geo?.country || "N.A.";
-	}, [API.data, clusterID]);
-
-	const region = useMemo(() => {
-		if (API.data.clusterSummary === "Error" || JSON.stringify(API.data.clusterSummary) === "{}") return "N.A.";
-		return API.data.clusterSummary[clusterID].ip?.geo?.region || "N.A.";
-	}, [API.data, clusterID]);
-
-	const city = useMemo(() => {
-		if (API.data.clusterSummary === "Error" || JSON.stringify(API.data.clusterSummary) === "{}") return "N.A.";
-		return API.data.clusterSummary[clusterID].ip?.geo?.city || "N.A.";
-	}, [API.data, clusterID]);
-
 	const location = useMemo(() => {
-		if (country === "N.A." || city === "N.A." || region === "N.A.") return "N.A.";
-		return `${country}/${region}/${city}`;
-	}, [country, city, region]);
+		return getLocationString(API.data.clusterSummary, clusterID);
+	}, [API.data.clusterSummary, clusterID]);
 
 	if (thisClusterData === "Error" || API.data.clusterSummary === "Error")
 		return (
@@ -113,6 +97,7 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 			/>
 			<div className="h-70percent pt-2">
 				<SortedTable
+					initialSorting={{col: 0, ascending: false}}
 					columns={[
 						{ type: "text", label: "Timestamp" },
 						{ type: "text", label: "Provider" },
