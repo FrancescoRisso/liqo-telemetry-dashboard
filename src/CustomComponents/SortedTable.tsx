@@ -118,6 +118,11 @@ const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTa
 						</tbody>
 					</Table>
 				</div>
+				<p className="ml-10px mb-0">
+					<i>
+						<small> {values.length} rows displayed.</small>
+					</i>
+				</p>
 			</div>
 		</div>
 	);
