@@ -34,11 +34,11 @@ const SideMenu = () => {
 					Cluster details
 				</Link>
 			</Nav.Item>
-			<Nav.Item>
+			{/* <Nav.Item>
 				<Link className="nav-link" to="/">
 					Statistics
 				</Link>
-			</Nav.Item>
+			</Nav.Item> */}
 		</Nav>
 	);
 };
