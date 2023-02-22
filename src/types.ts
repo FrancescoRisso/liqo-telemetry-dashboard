@@ -15,8 +15,10 @@ export interface ClusterGenericInfo {
 
 
 
-
 	
+
+
+
 }
 
 export interface ClusterDataType {
