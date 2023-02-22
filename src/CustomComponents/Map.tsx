@@ -35,7 +35,7 @@ const Map = ({ location, pins, width, height }: MapProps) => {
 	const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.REACT_APP_GMAPS_API_KEY || "" });
 
 	const center = useMemo(() => {
-		if ((pins === undefined || pins.length === 0) && location !== undefined)
+		if ((pins?.length === 0 ?? true) && location !== undefined)
 			return { lat: location[0], lng: location[1] };
 		if (pins !== undefined && pins.length > 0)
 			return {

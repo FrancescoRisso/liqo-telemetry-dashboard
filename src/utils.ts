@@ -41,9 +41,7 @@ export const sortTable: TableSortingFunction = (fieldNo: number) => {
 export const countPeers = (direction: "incoming" | "outgoing", telemetry: Telemetry) => {
 	if (telemetry?.peeringInfo === undefined) return 0;
 
-	return telemetry.peeringInfo.filter((pi: PeeringInfo) =>
-		pi[direction] === undefined ? false : pi[direction]?.enabled
-	).length;
+	return telemetry.peeringInfo.filter((pi: PeeringInfo) => pi[direction]?.enabled || false).length;
 };
 
 export const providerToIcon = (provider: string) => {

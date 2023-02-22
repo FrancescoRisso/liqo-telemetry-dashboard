@@ -42,35 +42,26 @@ const login = (token: string) => {
 // Useful to avoid errors in the page
 const fillGaps = (table: DatabaseRow[]) => {
 	table.map((row: DatabaseRow) => {
-		if (!("ip" in row)) row.ip = deepCopy(emptyIp);
+		row.ip ??= deepCopy(emptyIp);
 
-		if (!("telemetry" in row) || row.telemetry === undefined) row.telemetry = getEmptyTelemetry(row.clusterID);
-		else {
-			if (!("clusterID" in row.telemetry) || row.telemetry.clusterID === undefined)
-				row.telemetry.clusterID = row.clusterID;
-			if (!("provider" in row.telemetry) || row.telemetry.provider === undefined) row.telemetry.provider = "N.A.";
-			if (!("liqoVersion" in row.telemetry) || row.telemetry.liqoVersion === undefined)
-				row.telemetry.liqoVersion = "N.A.";
-			if (!("kubernetesVersion" in row.telemetry) || row.telemetry.kubernetesVersion === undefined)
-				row.telemetry.kubernetesVersion = "N.A.";
-			if (!("peeringInfo" in row.telemetry) || row.telemetry.peeringInfo === undefined)
-				row.telemetry.peeringInfo = [];
-			else {
-				row.telemetry.peeringInfo = row.telemetry.peeringInfo.map((info: PeeringInfo) => {
-					if (!("remoteClusterID" in info)) info.remoteClusterID = "N.A.";
-					if (!("method" in info)) info.method = "N.A.";
-					if (!("discoveryType" in info)) info.discoveryType = "N.A.";
-					if (!("latency" in info)) info.latency = undefined;
-					if (!("incoming" in info) || info.incoming === undefined) info.incoming = { enabled: false };
-					if (!("outgoing" in info) || info.outgoing === undefined) info.outgoing = { enabled: false };
-					return info;
-				});
-			}
-			if (!("namespacesInfo" in row.telemetry) || row.telemetry.namespacesInfo === undefined)
-				row.telemetry.namespacesInfo = [];
-		}
+		row.telemetry ??= getEmptyTelemetry(row.clusterID);
 
-		// if (!("timestamp" in row)) row.timestamp = 0;
+		row.telemetry.clusterID ??= row.clusterID;
+		row.telemetry.provider ??= "N.A.";
+		row.telemetry.liqoVersion ??= "N.A.";
+		row.telemetry.kubernetesVersion ??= "N.A.";
+		row.telemetry.peeringInfo ??= [];
+		row.telemetry.peeringInfo = row.telemetry.peeringInfo.map((info: PeeringInfo) => {
+			info.remoteClusterID ??= "N.A.";
+			info.method ??= "N.A.";
+			info.discoveryType ??= "N.A.";
+			info.latency ??= undefined;
+			info.incoming ??= { enabled: false };
+			info.outgoing ??= { enabled: false };
+			return info;
+		});
+
+		row.telemetry.namespacesInfo ??= [];
 
 		return row;
 	});
