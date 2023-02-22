@@ -2,6 +2,8 @@
 |	Structure of the API context values								|
 \================================================================= */
 
+import { ReactNode } from "react";
+
 export interface ClusterGenericInfo {
 	ip?: IP;
 	computedFirstSeen: number;
@@ -9,7 +11,7 @@ export interface ClusterGenericInfo {
 	provider: string;
 	inPeers: number;
 	outPeers: number;
-	liqoVersion: string
+	liqoVersion: string;
 }
 
 export interface ClusterDataType {
@@ -59,6 +61,11 @@ export interface LinkColumn {
 	value: string;
 }
 
+export interface ChildColumn {
+	type: "child";
+	value: ReactNode;
+}
+
 export interface TimeColumn {
 	type: "time";
 	value: number;
@@ -71,7 +78,7 @@ export interface DurationColumn {
 	value?: undefined; // unused
 }
 
-export type TableColumn = TextColumn | LinkColumn | TimeColumn | DurationColumn | IconColumn;
+export type TableColumn = ChildColumn | TextColumn | LinkColumn | TimeColumn | DurationColumn | IconColumn;
 export type TableRowType = TableColumn[];
 
 export interface TableColumnTitle {
@@ -81,6 +88,10 @@ export interface TableColumnTitle {
 
 export function isDurationColumn(obj: TableColumn): obj is DurationColumn {
 	return obj.type === "timeDuration";
+}
+
+export function isChildColumn(obj: TableColumn): obj is ChildColumn {
+	return obj.type === "child";
 }
 
 export function isClusterDataType(obj: "Error" | ClusterDataType[]): obj is ClusterDataType[] {
@@ -171,4 +182,10 @@ export interface PeerCount {
 		in: number;
 		out: number;
 	};
+}
+
+export interface ChildWithVisibility {
+	element: ReactNode | JSX.Element;
+	visible: boolean;
+	selectMe: Function;
 }

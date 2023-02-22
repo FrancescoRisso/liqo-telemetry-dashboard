@@ -8,6 +8,7 @@ state:
 	- data: the sorted data displayed in the table
 	- sortedAscending: whether data is currently sorted in an ascending or descending order
 		null if no sorting is currently in place
+	- expandedRow: the row with the child displayed, if present, null otherwhise
 	
 hooks:
 	- useEffect: every time the props data changes, pushes it into the state variable,
@@ -28,13 +29,13 @@ component dependences:
 	
 */
 
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 
 import { Table } from "react-bootstrap";
-import { TableColumnTitle, TableRowType, LinkColumn } from "../types";
+import { TableColumnTitle, TableRowType, LinkColumn, ChildColumn } from "../types";
 
 export interface SortedTableProps {
 	columns: TableColumnTitle[]; // the list of titles of the columns
@@ -54,6 +55,7 @@ const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTa
 	const [sortingBy, setSortingBy] = useState<string | null>(null);
 	const [sortedAscending, setSortedAscending] = useState<boolean | null>(null);
 	const [data, setData] = useState<TableRowType[]>([]);
+	const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
 	useEffect(() => {
 		if (initialSorting) {
@@ -69,7 +71,7 @@ const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTa
 		<div className="pb-0 h-100percent w-100percent">
 			<div className="pb-0 h-100percent table-wrapper w-100percent">
 				<div className="border">
-					<Table striped bordered className="mb-0 fixed white-bg border-table">
+					<Table bordered className="mb-0 fixed white-bg border-table">
 						<thead className="fixed bg-white">
 							<tr>
 								{columns.map((title, index, array) => {
@@ -98,6 +100,7 @@ const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTa
 						<tbody className="table-wrapper">
 							{data.map((record, index) => {
 								const width = `${100 / columns.length}%`;
+
 								let link: string | undefined = undefined;
 								if (record.filter((x) => x.type === "link").length !== 0) {
 									const linkSetting: LinkColumn = record.filter(
@@ -105,13 +108,34 @@ const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTa
 									)[0] as LinkColumn;
 									link = linkSetting.value;
 								}
+
+								let child: ReactNode | undefined = undefined;
+								if (record.filter((x) => x.type === "child").length !== 0) {
+									const childSetting: ChildColumn = record.filter(
+										(x) => x.type === "child"
+									)[0] as ChildColumn;
+									child = childSetting.value;
+								}
+
 								return (
 									<TableRow
 										id={index}
 										key={index}
 										width={width}
-										data={record.filter((x) => x.type !== "link")}
+										data={record.filter((x) => x.type !== "link" && x.type !== "child")}
 										link={link}
+										child={
+											child === undefined
+												? undefined
+												: {
+														element: child,
+														visible: expandedRow === index,
+														selectMe: () => {
+															if (expandedRow === index) setExpandedRow(null);
+															else setExpandedRow(index);
+														}
+												  }
+										}
 									/>
 								);
 							})}

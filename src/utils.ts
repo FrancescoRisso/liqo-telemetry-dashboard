@@ -1,4 +1,4 @@
-import { PeeringInfo, Telemetry, isDurationColumn, ClusterGenericInfo } from "./types";
+import { PeeringInfo, Telemetry, isDurationColumn, ClusterGenericInfo, isChildColumn } from "./types";
 import { TableColumn, TableRowType, TableSortingFunction } from "./types";
 
 import aksLogo from "./images/providers_logos/aks.svg";
@@ -22,7 +22,12 @@ export const sortTable: TableSortingFunction = (fieldNo: number) => {
 			if (isDurationColumn(fieldA) && isDurationColumn(fieldB)) {
 				a = fieldA.last - fieldA.first;
 				b = fieldB.last - fieldB.first;
-			} else if (!isDurationColumn(fieldA) && !isDurationColumn(fieldB)) {
+			} else if (
+				!isDurationColumn(fieldA) &&
+				!isDurationColumn(fieldB) &&
+				!isChildColumn(fieldA) &&
+				!isChildColumn(fieldB)
+			) {
 				a = fieldA.value;
 				b = fieldB.value;
 			} else return 0;

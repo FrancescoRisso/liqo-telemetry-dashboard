@@ -29,7 +29,7 @@ import { useContext, useEffect, useMemo } from "react";
 import ClusterTitle from "./ClusterTitle";
 
 import { ApiContext } from "./ApiContext";
-import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount } from "../types";
+import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount, ChildColumn } from '../types';
 import SortedTable from "./SortedTable";
 import { providerToIcon, sortTable, getLocationString } from "../utils";
 
@@ -120,7 +120,11 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 						};
 						const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
 						const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
-						return [timestamp, provider, k8sVersion, version, inPeers, outPeers];
+						const details: ChildColumn = {
+							type:"child",
+							value: <div className="w-100percent p-0">Tmp test</div>
+						}
+						return [timestamp, provider, k8sVersion, version, inPeers, outPeers, details];
 					})}
 					sortingFunct={sortTable}
 				/>
