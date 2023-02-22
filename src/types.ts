@@ -12,13 +12,6 @@ export interface ClusterGenericInfo {
 	inPeers: number;
 	outPeers: number;
 	liqoVersion: string;
-
-
-
-	
-
-
-
 }
 
 export interface ClusterDataType {
