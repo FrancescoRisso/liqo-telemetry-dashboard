@@ -28,7 +28,7 @@ import { useContext } from "react";
 
 import { Navigate, useParams } from "react-router-dom";
 import { ApiContext } from "../ApiContext";
-import { requireLogin } from "../../devSettings";
+import { requireLogin } from "../../env";
 
 import ClustersList from "../Cluster pages/ClustersList";
 import ClusterDetails from "../Cluster pages/ClusterDetails";

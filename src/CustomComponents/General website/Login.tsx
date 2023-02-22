@@ -20,6 +20,7 @@ other dependences:
 */
 
 import padlock from "../../images/padlock.svg";
+import { REACT_APP_AWS_LOGIN } from '../../env';
 
 export interface LoginProps {
 	text: string;	// the text to be displayed above the login button
@@ -32,7 +33,7 @@ export const Login = ({ text }: LoginProps) => {
 			<a
 				role="button"
 				className="center-horizontally btn btn-dark bigger-text p-3"
-				href={process.env.REACT_APP_AWS_LOGIN || ""}
+				href={REACT_APP_AWS_LOGIN}
 			>
 				<p className="my-0 mx-3">
 					<span className="center-vertically" style={{ height: "30px" }}>

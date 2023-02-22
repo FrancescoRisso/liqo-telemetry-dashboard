@@ -22,7 +22,7 @@ other dependences:
 
 import { useLoadScript, GoogleMap, MarkerF } from "@react-google-maps/api";
 import { useMemo } from "react";
-import { renderMap } from "../devSettings";
+import { REACT_APP_GMAPS_API_KEY, renderMap } from "../env";
 
 export interface MapProps {
 	location?: [number, number]; // The (lat, long) of the center of the map (ignored if there are pins)
@@ -32,11 +32,10 @@ export interface MapProps {
 }
 
 const Map = ({ location, pins, width, height }: MapProps) => {
-	const { isLoaded } = useLoadScript({ googleMapsApiKey: process.env.REACT_APP_GMAPS_API_KEY || "" });
+	const { isLoaded } = useLoadScript({ googleMapsApiKey: REACT_APP_GMAPS_API_KEY });
 
 	const center = useMemo(() => {
-		if ((pins?.length === 0 ?? true) && location !== undefined)
-			return { lat: location[0], lng: location[1] };
+		if ((pins?.length === 0 ?? true) && location !== undefined) return { lat: location[0], lng: location[1] };
 		if (pins !== undefined && pins.length > 0)
 			return {
 				lng: (Math.max(...pins.map((pin) => pin[1])) + Math.min(...pins.map((pin) => pin[1]))) / 2,

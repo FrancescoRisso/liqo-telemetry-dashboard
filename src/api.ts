@@ -5,7 +5,7 @@ import firstRecordCached from "./cached-first-record-table";
 import detailsCached from "./cached-cluster-details";
 
 import { IP, Telemetry, DatabaseRow, PeeringInfo, AWSParams } from "./types";
-import { requireLogin } from "./devSettings";
+import { requireLogin } from "./env";
 
 const deepCopy = (original: any): any => {
 	return JSON.parse(JSON.stringify(original)) as typeof original;
