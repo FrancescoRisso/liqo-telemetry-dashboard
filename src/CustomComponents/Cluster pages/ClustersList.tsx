@@ -33,7 +33,16 @@ import { ApiContext } from "../ApiContext";
 
 import { Button } from "react-bootstrap";
 import refresh from "../../images/refresh.svg";
-import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../../types";
+import {
+	TableRowType,
+	TextColumn,
+	DurationColumn,
+	TimeColumn,
+	LinkColumn,
+	IconColumn,
+	ClusterGenericInfo,
+	ApiContextStructure
+} from "../../types";
 import { Entries } from "type-fest";
 import { providerToIcon, sortTable, getLocationString } from "../../utils";
 
@@ -68,39 +77,7 @@ const ClustersList = () => {
 			<div style={{ height: `calc(100% - 60px` }} className="pb-2">
 				<SortedTable
 					values={(Object.entries(API.data.clusterSummary) as Entries<typeof API.data.clusterSummary>).map(
-						([clusterID, record]): TableRowType => {
-							const clusterIdCol: TextColumn = { type: "text", value: clusterID };
-							const uptime: DurationColumn = {
-								type: "timeDuration",
-								first: record.computedFirstSeen,
-								last: record.lastSeen
-							};
-							const lastSeen: TimeColumn = { type: "time", value: record.lastSeen };
-							const provider: IconColumn = {
-								type: "textWithIcon",
-								value: record.provider,
-								icon: providerToIcon(record.provider)
-							};
-							const location: TextColumn = {
-								type: "text",
-								value: getLocationString(API.data.clusterSummary, clusterID)
-							};
-							const liqoVersion: TextColumn = { type: "text", value: record.liqoVersion };
-							const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
-							const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
-							const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
-							return [
-								clusterIdCol,
-								uptime,
-								lastSeen,
-								provider,
-								location,
-								liqoVersion,
-								inPeers,
-								outPeers,
-								link
-							];
-						}
+						([clusterID, record]): TableRowType => createTableColumn(API, clusterID, record)
 					)}
 					columns={[
 						{ type: "text", label: "Cluster ID" },
@@ -120,3 +97,27 @@ const ClustersList = () => {
 };
 
 export default ClustersList;
+
+const createTableColumn = (API: ApiContextStructure, clusterID: string, record: ClusterGenericInfo): TableRowType => {
+	const clusterIdCol: TextColumn = { type: "text", value: clusterID };
+	const uptime: DurationColumn = {
+		type: "timeDuration",
+		first: record.computedFirstSeen,
+		last: record.lastSeen
+	};
+	const lastSeen: TimeColumn = { type: "time", value: record.lastSeen };
+	const provider: IconColumn = {
+		type: "textWithIcon",
+		value: record.provider,
+		icon: providerToIcon(record.provider)
+	};
+	const location: TextColumn = {
+		type: "text",
+		value: getLocationString(API.data.clusterSummary, clusterID)
+	};
+	const liqoVersion: TextColumn = { type: "text", value: record.liqoVersion };
+	const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
+	const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
+	const link: LinkColumn = { type: "link", value: `/cluster/${clusterID}` };
+	return [clusterIdCol, uptime, lastSeen, provider, location, liqoVersion, inPeers, outPeers, link];
+};
