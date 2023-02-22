@@ -32,7 +32,7 @@ export const Login = ({ text }: LoginProps) => {
 			<a
 				role="button"
 				className="center-horizontally btn btn-dark bigger-text p-3"
-				href="https://liqo.auth.eu-west-1.amazoncognito.com/login?client_id=7u72s21d0m6eqaoufg4ti72249&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000"
+				href={process.env.REACT_APP_AWS_LOGIN || ""}
 			>
 				<p className="my-0 mx-3">
 					<span className="center-vertically" style={{ height: "30px" }}>
