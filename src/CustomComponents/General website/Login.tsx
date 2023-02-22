@@ -19,7 +19,7 @@ other dependences:
 	
 */
 
-import padlock from "../images/padlock.svg";
+import padlock from "../../images/padlock.svg";
 
 export interface LoginProps {
 	text: string;	// the text to be displayed above the login button

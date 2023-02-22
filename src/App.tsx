@@ -28,8 +28,8 @@ other dependences:
 	
 */
 
-import TitleBar from "./CustomComponents/TitleBar";
-import SideMenu from "./CustomComponents/SideMenu";
+import TitleBar from "./CustomComponents/General website/TitleBar";
+import SideMenu from "./CustomComponents/General website/SideMenu";
 import PageRouter from "./CustomComponents/Routing/PageRouter";
 import { ApiContextProvider } from "./CustomComponents/ApiContext";
 

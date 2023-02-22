@@ -20,9 +20,9 @@ other dependences:
 
 */
 
-import sortBoth from "../images/sort-both.svg";
-import sortUp from "../images/sort-up.svg";
-import sortDown from "../images/sort-down.svg";
+import sortBoth from "../../images/sort-both.svg";
+import sortUp from "../../images/sort-up.svg";
+import sortDown from "../../images/sort-down.svg";
 
 export interface TableHeaderProps {
 	title: string; //the title to be displayed

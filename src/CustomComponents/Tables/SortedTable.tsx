@@ -35,7 +35,7 @@ import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 
 import { Table } from "react-bootstrap";
-import { TableColumnTitle, TableRowType, LinkColumn, ChildColumn } from "../types";
+import { TableColumnTitle, TableRowType, LinkColumn, ChildColumn } from "../../types";
 
 export interface SortedTableProps {
 	columns: TableColumnTitle[]; // the list of titles of the columns

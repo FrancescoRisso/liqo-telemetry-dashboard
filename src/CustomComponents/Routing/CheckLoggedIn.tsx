@@ -30,8 +30,8 @@ import { Navigate, useParams } from "react-router-dom";
 import { ApiContext } from "../ApiContext";
 import { requireLogin } from "../../devSettings";
 
-import ClustersList from "../ClustersList";
-import ClusterDetails from "../ClusterDetails";
+import ClustersList from "../Cluster pages/ClustersList";
+import ClusterDetails from "../Cluster pages/ClusterDetails";
 
 export interface CheckLoggedInProps {
 	link: string; // the link of the displayed page

@@ -21,8 +21,8 @@ other dependences:
 */
 
 import Moment from "react-moment";
-import Map from "./Map";
-import { PeerCount } from "../types";
+import Map from "../Map";
+import { PeerCount } from "../../types";
 
 export interface ClusterTitleProps {
 	clusterID: string; // The ID of the cluster

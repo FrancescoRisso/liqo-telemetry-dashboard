@@ -25,7 +25,7 @@ other dependences:
 import { useState } from "react";
 
 import { Navigate } from "react-router-dom";
-import { TableRowType, TableColumn, ChildWithVisibility } from "../types";
+import { TableRowType, TableColumn, ChildWithVisibility } from "../../types";
 import TableCell from "./TableCell";
 
 export interface TableRowProps {

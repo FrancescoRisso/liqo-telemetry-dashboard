@@ -28,10 +28,10 @@ import { useContext, useEffect, useMemo } from "react";
 
 import ClusterTitle from "./ClusterTitle";
 
-import { ApiContext } from "./ApiContext";
-import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount, ChildColumn } from '../types';
-import SortedTable from "./SortedTable";
-import { providerToIcon, sortTable, getLocationString } from "../utils";
+import { ApiContext } from "../ApiContext";
+import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount, ChildColumn } from "../../types";
+import SortedTable from "../Tables/SortedTable";
+import { providerToIcon, sortTable, getLocationString } from "../../utils";
 
 export interface ClusterDetailsProps {
 	clusterID: string;
@@ -97,7 +97,7 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 			/>
 			<div className="h-70percent pt-2">
 				<SortedTable
-					initialSorting={{col: 0, ascending: false}}
+					initialSorting={{ col: 0, ascending: false }}
 					columns={[
 						{ type: "text", label: "Timestamp" },
 						{ type: "text", label: "Provider" },
@@ -121,9 +121,9 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 						const inPeers: TextColumn = { type: "text", value: String(record.inPeers) };
 						const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
 						const details: ChildColumn = {
-							type:"child",
+							type: "child",
 							value: <div className="w-100percent p-0">Tmp test</div>
-						}
+						};
 						return [timestamp, provider, k8sVersion, version, inPeers, outPeers, details];
 					})}
 					sortingFunct={sortTable}

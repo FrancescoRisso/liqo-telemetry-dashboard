@@ -27,15 +27,15 @@ other dependences:
 
 import { useContext, useEffect } from "react";
 
-import SortedTable from "./SortedTable";
+import SortedTable from "../Tables/SortedTable";
 
-import { ApiContext } from "./ApiContext";
+import { ApiContext } from "../ApiContext";
 
 import { Button } from "react-bootstrap";
-import refresh from "../images/refresh.svg";
-import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../types";
+import refresh from "../../images/refresh.svg";
+import { TableRowType, TextColumn, DurationColumn, TimeColumn, LinkColumn, IconColumn } from "../../types";
 import { Entries } from "type-fest";
-import { providerToIcon, sortTable, getLocationString } from "../utils";
+import { providerToIcon, sortTable, getLocationString } from "../../utils";
 
 // export interface ClustersListProps {}
 

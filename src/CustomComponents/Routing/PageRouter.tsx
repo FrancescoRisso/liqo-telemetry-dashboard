@@ -22,7 +22,7 @@ other dependences:
 	
 */
 
-import { Login } from "../Login";
+import { Login } from "../General website/Login";
 import CheckLoggedIn from "./CheckLoggedIn";
 import RedirectFromHome from "./RedirectFromHome";
 

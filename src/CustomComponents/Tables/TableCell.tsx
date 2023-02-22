@@ -20,7 +20,7 @@ other dependences:
 */
 
 import Moment from "react-moment";
-import { TableColumn } from "../types";
+import { TableColumn } from "../../types";
 
 export interface TableCellProps {
 	value: TableColumn; // the content of the cell

@@ -21,7 +21,7 @@ other dependences:
 */
 
 import { Container, Navbar } from "react-bootstrap";
-import { requireLogin } from "../devSettings";
+import { requireLogin } from "../../devSettings";
 
 const TitleBar = () => {
 	return (
