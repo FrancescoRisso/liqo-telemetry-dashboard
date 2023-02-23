@@ -6,8 +6,8 @@
 # cached things
 cached-*
 
-# boh
-./liqo-telemetry-dashboard
+# my todo notes
+todo.txt
 
 # dependencies
 /node_modules

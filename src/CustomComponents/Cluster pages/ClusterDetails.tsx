@@ -32,6 +32,7 @@ import { ApiContext } from "../ApiContext";
 import { ClusterDataType, TimeColumn, TextColumn, IconColumn, PeerCount, ChildColumn } from "../../types";
 import SortedTable from "../Tables/SortedTable";
 import { providerToIcon, sortTable, getLocationString } from "../../utils";
+import ClusterPeeringDetails from "./ClusterPeeringDetails";
 
 export interface ClusterDetailsProps {
 	clusterID: string;
@@ -122,7 +123,7 @@ const ClusterDetails = ({ clusterID }: ClusterDetailsProps) => {
 						const outPeers: TextColumn = { type: "text", value: String(record.outPeers) };
 						const details: ChildColumn = {
 							type: "child",
-							value: <div className="w-100percent p-0">Tmp test</div>
+							value: ClusterPeeringDetails({ record })
 						};
 						return [timestamp, provider, k8sVersion, version, inPeers, outPeers, details];
 					})}
