@@ -45,10 +45,13 @@ const App = () => {
 				<TitleBar />
 				<Container fluid>
 					<Row>
-						<Col md="2" className="p-0">
+						{/* <Col md="2" className="p-0">
 							<SideMenu />
 						</Col>
 						<Col md="10">
+							<PageRouter />
+						</Col> */}
+						<Col md="12">
 							<PageRouter />
 						</Col>
 					</Row>

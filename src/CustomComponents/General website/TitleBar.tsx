@@ -20,7 +20,7 @@ other dependences:
 	
 */
 
-import { Container, Navbar } from "react-bootstrap";
+import { Container, Nav, Navbar } from "react-bootstrap";
 import { requireLogin } from "../../env";
 
 const TitleBar = () => {
@@ -37,6 +37,9 @@ const TitleBar = () => {
 					/>{" "}
 					Usage telemetry dashboard {requireLogin ? "" : "- WARNING: using old data"}
 				</Navbar.Brand>
+				<Nav>
+					<Nav.Link href="/clusters">Cluster details</Nav.Link>
+				</Nav>
 			</Container>
 		</Navbar>
 	);
