@@ -1,24 +1,24 @@
-import { ClusterDataType } from "../../types";
-import { Table } from "react-bootstrap";
 /*
-
 description:
-	The full descryption of a peering detail
-	
+The full descryption of a peering detail
+
 state:
-	
+
 hooks:
 	
 context:
-	
+
 imported into:
-	- ClusterDetails
-	
+- ClusterDetails
+
 component dependences:
-	
+
 other dependences:
-	
+
 */
+
+import { ClusterDataType } from "../../types";
+// import { Table } from "react-bootstrap";
 
 export interface ClusterPeeringDetailsProps {
 	record: ClusterDataType;

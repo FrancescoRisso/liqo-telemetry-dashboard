@@ -29,127 +29,119 @@ component dependences:
 	
 */
 
-import { ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import TableHeader from "./TableHeader";
-import TableRow from "./TableRow";
+import { TableColumnTitle, TableRowType } from "../../types";
+import { HeaderCellSort, useSort } from "@table-library/react-table-library/sort";
+import TableCell from "./TableCell";
+import { Table, Header, HeaderRow, Body, TableNode } from "@table-library/react-table-library/table";
+import NewTableRow from "./NewTableRow";
+import { sortTable } from "../../utils";
 
-import { Table } from "react-bootstrap";
-import { TableColumnTitle, TableRowType, LinkColumn, ChildColumn } from "../../types";
+import SortBoth from "../../images/sort-both.svg";
+import SortUp from "../../images/sort-up.svg";
+import SortDown from "../../images/sort-down.svg";
 
 export interface SortedTableProps {
 	columns: TableColumnTitle[]; // the list of titles of the columns
 	values: TableRowType[]; // the list of rows.
 	// If there is a LinkColumn, that value would not be inserted as a column, but
 	// the whole row would be a link to  that path
-	sortingFunct: Function; // a function that, given the column name, returns a
-	// series of nested functions, that work as follows:
-	// - sortingFunct(colName, index) -> returns sortingFunctAsc(ascending: bool)
-	// - sortingFunctAsc(asc) -> returns comparisonFunct(a, b)
-	// - comparisonFunct is the function to be passed to Array.sort()
 	initialSorting?: { col: number; ascending: boolean }; // if an initial sorting is
 	// retquired, and how (col == index of the desired column)
+	sortingFunct: Function;
 }
 
-const SortedTable = ({ columns, values, sortingFunct, initialSorting }: SortedTableProps) => {
-	const [sortingBy, setSortingBy] = useState<string | null>(null);
-	const [sortedAscending, setSortedAscending] = useState<boolean | null>(null);
-	const [data, setData] = useState<TableRowType[]>([]);
+const SortedTable = ({ columns, values, initialSorting, sortingFunct }: SortedTableProps) => {
 	const [expandedRow, setExpandedRow] = useState<number | null>(null);
 
-	useEffect(() => {
-		if (initialSorting) {
-			const sortingFunctAsc = sortingFunct(initialSorting.col);
-			const comparisonFunct = sortingFunctAsc(initialSorting.ascending);
-			setData([...values].sort(comparisonFunct));
-			setSortingBy(columns[initialSorting.col].label);
-			setSortedAscending(initialSorting.ascending);
-		} else setData(values);
-	}, [values, columns, initialSorting, sortingFunct]);
+	const data = {
+		nodes: values.map((row: TableRowType, index: number) => {
+			const id = ["id", index];
+
+			const otherfields = columns.map((col, index) => {
+				return [col.label, row[index]];
+			});
+
+			const link = ["link", row.filter((x) => x.type === "link")[0] || undefined];
+			const child = ["child", row.filter((x) => x.type === "child")[0] || undefined];
+			return Object.fromEntries([id, ...otherfields, link, child]);
+		})
+	};
+
+	const tableValues = columns.map((col) => {
+		return {
+			label: col.label,
+			renderCell: (item: any) => {
+				return <TableCell value={item[col.label]} />;
+			}
+		};
+	});
+
+	const sort = useSort(
+		data,
+		{
+			onChange: () => {},
+			state: initialSorting ? { sortKey: columns[initialSorting.col].label, reverse: !initialSorting.ascending } : {}
+		},
+		{
+			sortFns: Object.fromEntries(
+				columns.map((col) => {
+					return [col.label, (array) => array.sort(sortFunct(col.label))];
+				})
+			),
+			sortIcon: {
+				margin: "5px",
+				iconDefault: <img src={SortBoth} alt="" />,
+				iconUp: <img src={SortUp} alt="" />,
+				iconDown: <img src={SortDown} alt="" />
+			}
+		}
+	);
+
+	const resize = { resizerHighlight: "#dde2eb", resizerWidth: 10 };
 
 	return (
 		<div className="pb-0 h-100percent w-100percent">
-			<div className="pb-0 h-100percent table-wrapper w-100percent">
-				<div className="border">
-					<Table bordered className="mb-0 fixed white-bg border-table">
-						<thead className="fixed bg-white">
-							<tr>
-								{columns.map((title, index, array) => {
-									const sortingFunctAsc = sortingFunct(index);
-									return (
-										<TableHeader
-											key={title.label}
-											width={`${100 / array.length}%`}
-											title={title.label}
-											doSort={() => {
-												const newSortDirection =
-													sortedAscending === null || sortingBy !== title.label
-														? true
-														: !sortedAscending;
-												const comparisonFunct = sortingFunctAsc(newSortDirection);
-												if (sortingBy !== title.label) setSortingBy(title.label);
-												setSortedAscending(newSortDirection);
-												setData([...data].sort(comparisonFunct));
-											}}
-											currentSortAscending={sortingBy === title.label ? sortedAscending : null}
-										/>
-									);
-								})}
-							</tr>
-						</thead>
-						<tbody className="table-wrapper">
-							{data.map((record, index) => {
-								const width = `${100 / columns.length}%`;
-
-								let link: string | undefined = undefined;
-								if (record.filter((x) => x.type === "link").length !== 0) {
-									const linkSetting: LinkColumn = record.filter(
-										(x) => x.type === "link"
-									)[0] as LinkColumn;
-									link = linkSetting.value;
-								}
-
-								let child: ReactNode | undefined = undefined;
-								if (record.filter((x) => x.type === "child").length !== 0) {
-									const childSetting: ChildColumn = record.filter(
-										(x) => x.type === "child"
-									)[0] as ChildColumn;
-									child = childSetting.value;
-								}
-
-								return (
-									<TableRow
-										id={index}
-										key={index}
-										width={width}
-										data={record.filter((x) => x.type !== "link" && x.type !== "child")}
-										link={link}
-										child={
-											child === undefined
-												? undefined
-												: {
-														element: child,
-														visible: expandedRow === index,
-														selectMe: () => {
-															if (expandedRow === index) setExpandedRow(null);
-															else setExpandedRow(index);
-														}
-												  }
-										}
+			<div className="pb-0 h-100percent w-100percent">
+				<Table data={data} sort={sort} layout={{fixedHeader: true}}>
+					{(tableList) => (
+						<>
+							<Header>
+								<HeaderRow>
+									{tableValues.map((title, index) => (
+										<HeaderCellSort resize={resize} id={index} sortKey={title.label}>
+											{title.label}
+										</HeaderCellSort>
+									))}
+								</HeaderRow>
+							</Header>
+							<Body>
+								{tableList.map((item, index) => (
+									<NewTableRow
+										item={item}
+										columns={tableValues}
+										expanded={item.child && index === expandedRow}
+										setExpanded={() => {
+											if (item.child && index === expandedRow) setExpandedRow(null);
+											else setExpandedRow(index);
+										}}
 									/>
-								);
-							})}
-						</tbody>
-					</Table>
-				</div>
-				<p className="ml-10px mb-0">
-					<i>
-						<small> {values.length} rows displayed.</small>
-					</i>
-				</p>
+								))}
+							</Body>
+						</>
+					)}
+				</Table>
 			</div>
 		</div>
 	);
 };
 
 export default SortedTable;
+
+const sortFunct = (field: string) => {
+	const sorter = sortTable(0)(true);
+	return (a: TableNode, b: TableNode) => {
+		return sorter([a[field]], [b[field]]);
+	};
+};

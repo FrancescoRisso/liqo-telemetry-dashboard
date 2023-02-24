@@ -112,7 +112,6 @@ const getClusterData = async (clusterID: string) => {
 	};
 
 	const result = await docClient.query(params).promise();
-	console.log({ [clusterID]: result.Items });
 	return result.Items;
 };
 
