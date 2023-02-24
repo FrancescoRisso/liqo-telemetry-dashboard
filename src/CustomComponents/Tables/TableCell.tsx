@@ -32,7 +32,7 @@ const TableCell = ({ value }: TableCellProps) => {
 	if (value.type === "text") return <>{value.value}</>;
 
 	if (value.type === "timeDuration")
-		return <Moment duration={value.first} date={value.last} format="D[d], H[h], m[m]" />;
+		return <Moment duration={value.first} date={value.last} format="D[d]" />;
 
 	if (value.type === "textWithIcon")
 		return (
