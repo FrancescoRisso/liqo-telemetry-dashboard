@@ -22,6 +22,7 @@ other dependences:
 
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { requireLogin } from "../../env";
+import { Link, redirect } from "react-router-dom";
 
 const TitleBar = () => {
 	return (
@@ -38,7 +39,16 @@ const TitleBar = () => {
 					Usage telemetry dashboard {requireLogin ? "" : "- WARNING: using old data"}
 				</Navbar.Brand>
 				<Nav>
-					<Nav.Link href="/clusters">Cluster details</Nav.Link>
+					<Nav.Link
+						href="/clusters"
+						onClick={(event) => {
+							event.preventDefault();
+							document.getElementById("clustersLink")?.click();
+						}}
+					>
+						Clusters list
+					</Nav.Link>
+					<Link to="/clusters" id="clustersLink" className="d-none" />
 				</Nav>
 			</Container>
 		</Navbar>
