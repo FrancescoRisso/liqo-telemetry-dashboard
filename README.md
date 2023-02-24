@@ -1,1 +1,1 @@
-# liqo-telemetry-dashboard
+# Liqo telemetry dashboard

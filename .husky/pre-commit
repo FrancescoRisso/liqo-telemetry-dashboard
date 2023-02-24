@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+# . "$(dirname -- "$0")/_/husky.sh"
+
+# npm run pretty-quick --staged --check
+
+# Removed from package.json
+	# "husky": {
+	# 	"hooks": {
+	# 		"pre-commit": "pretty-quick --staged --check"
+	# 	}
+	# }
